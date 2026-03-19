@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ProductController {
 
-    @GetMapping("/public/products")
-    public ResponseEntity<ProductResponse> getAllProducts(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_),
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_),
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.PAGE_),
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.PAGE_)
-    ){
-        ProductResponse productResponse = productService.getAllProducts(pageNumber);
-        return new ResponseEntity<>(productResponse, HttpStatus.OK);
-    }
+//    @GetMapping("/public/products")
+//    public ResponseEntity<ProductResponse> getAllProducts(
+//            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_),
+//            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_),
+//            @RequestParam(name = "sortBy", defaultValue = AppConstants.PAGE_),
+//            @RequestParam(name = "sortOrder", defaultValue = AppConstants.PAGE_)
+//    ){
+//        ProductResponse productResponse = productService.getAllProducts(pageNumber);
+//        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+//    }
 }

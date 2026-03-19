@@ -28,10 +28,11 @@ const Filter = ()=>{
         const currentSearchTerm = searchParams.get("keyword") || "";
 
         setCategory(currentCategory);
-        setSortOrder(currentSortOrderr);
+        setSortOrder(currentSortOrder);
         setSearchTerm(currentSearchTerm)
         }, [searchParams]);
     const handleCategoryChange = (event)=>{
+        
         setCategory(event.target.value);
     }
     return(
