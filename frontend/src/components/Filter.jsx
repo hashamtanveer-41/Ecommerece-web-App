@@ -1,17 +1,10 @@
 import {useEffect, useState} from "react";
-import {FiArrowUp, FiRefreshCw, FiSearch} from "react-icons/fi";
+import {FiArrowDown, FiArrowUp, FiRefreshCw, FiSearch} from "react-icons/fi";
 import {FormControl, InputLabel, MenuItem, Select, Tooltip} from "@mui/material";
 import {Button} from "@headlessui/react";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 
-const Filter = ()=>{
-    const categories = [
-        {categoryId:1, categoryName: "Electronics"},
-        {categoryId:2, categoryName: "Clothing"},
-        {categoryId:3, categoryName: "Furniture"},
-        {categoryId:4, categoryName: "Books"},
-        {categoryId:5, categoryName: "Toys"},
-    ];
+const Filter = ({categories})=>{
 
     const [searchParams] = useSearchParams();
     const params = new URLSearchParams(searchParams);
@@ -31,18 +24,53 @@ const Filter = ()=>{
         setSortOrder(currentSortOrder);
         setSearchTerm(currentSearchTerm)
         }, [searchParams]);
+
+    useEffect(()=>{
+        const handler = setTimeout(() => {
+            if (searchTerm){
+                searchParams.set("keyword", searchTerm);
+            }else {
+                searchParams.delete("keyword");
+            }
+            navigate(`${pathName}?${searchParams.toString()}`)
+            return ()=>{
+                clearTimeout(handler)
+            }
+        } ,700);
+    }, [searchParams, searchTerm, navigate, pathName])
     const handleCategoryChange = (event)=>{
-        
+        const selectedCategory = event.target.value;
+
+        if (selectedCategory === "all"){
+            params.delete("category")
+        }else {
+            params.set("category", selectedCategory);
+        }
+        navigate(`${pathName}?${params}`)
         setCategory(event.target.value);
-    }
+    };
+
+    const toggleSortOrder = () => {
+        setSortOrder((prevOrder) => {
+            const newOrder = (prevOrder === "asc") ?  "desc" : "asc";
+            params.set("sortby", newOrder);
+            navigate(`${pathName}?${params}`);
+            return newOrder;
+        })
+    };
+
+    const handleClearFilter = () => {
+        navigate({pathname: window.location.pathname })
+    };
     return(
         <div className="flex lg:flex-row flex-col-reverse lg:justify-between justify-center items-center gap-4">
             {/*Search Bar*/}
-            <div className="relative flex items-center 2xl:w-[450px] sm:w-[420px] w-full ">
+            <div className="relative flex items-center 2xl:w-112.5 sm:w-105 w-full ">
                 <input
                     type="text"
                     placeholder="Search Products"
                     className="border border-gray-400 text-slate-800 rounded-md py-2 pl-10 pr-4 w-full focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                    onChange={(e)=> setSearchTerm(e.target.value)}
                 />
                 <FiSearch className="absolute left-3 text-slate-800 size-5"/>
             </div>
@@ -59,9 +87,9 @@ const Filter = ()=>{
                         value={category}
                         onChange={handleCategoryChange}
                         label="Category"
-                        className="min-w-[120px] text-slate-800 border-slate-700"
-                    >
-                        <MenuItem value={}>All</MenuItem>
+                        className="min-w-30 text-slate-800 border-slate-700"
+                     >
+                        <MenuItem value="all">All</MenuItem>
                         {categories.map((item)=> (
                             <MenuItem key={item.categoryId} value={item.categoryName}>{item.categoryName}</MenuItem>
                         ))}
@@ -69,15 +97,26 @@ const Filter = ()=>{
                 </FormControl>
 
                 {/*Sort Button and Clear Filter*/}
-                <Tooltip title="Sortedd by price: ascending order">
-                    <Button variant="contained" color="primary" className="flex items-center gap-2 h-10">
+                <Tooltip title="Sorted by price: ascending order">
+                    <Button variant="contained"
+                            color="primary"
+                            className="flex bg-blue-600 rounded-md p-4 text-white font-semibold items-center gap-2 h-10"
+                            onClick={toggleSortOrder}
+                    >
                         Sort By
-                        <FiArrowUp size={20}></FiArrowUp>
+                        {sortOrder === "asc" ? (
+                            <FiArrowUp size={20} />
+                        ) : (
+                            <FiArrowDown size={20} />
+                        )
+                         }
                     </Button>
                 </Tooltip>
 
                 <button
-                className="flex items-center gap-2 bg-rose-900 text-white px-3 py-2 rounded-md duration-300 ease-in shadow-md focus:outline-none">
+                className="flex items-center gap-2 bg-rose-900 text-white px-3 py-2 rounded-md duration-300 ease-in shadow-md focus:outline-none"
+                onClick={handleClearFilter}
+                >
                     <FiRefreshCw className="font-semibold" size={16}/>
                     <span className="font-semibold">Clear Filter</span>
                 </button>

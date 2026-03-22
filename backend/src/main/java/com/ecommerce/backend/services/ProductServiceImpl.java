@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,19 +49,48 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public ProductResponse getAllProducts(String keyword, String category, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+
+
+
+
+
+
+
+        // Validate sortBy parameter - only allow valid Product fields
+        List<String> validSortFields = List.of("productId", "productName", "price", "discount", "specialPrice", "quantity");
+
+        String validSortBy = sortBy != null && validSortFields.contains(sortBy) ? sortBy : "productId";
 
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ?
-                Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+                Sort.by(validSortBy).ascending()
+                : Sort.by(validSortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        Page<Category> productPage = categoryRepository.findAll(pageDetails);
 
-        List<Product>  products =productRepository.findAll();
+        Specification<Product> spec = null;
+
+        if (keyword != null && !keyword.isEmpty()){
+            spec = (root, query, criteriaBuilder) -> (
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), "%"+keyword.toLowerCase()+"%")
+            );
+        }
+
+        if (category != null && !category.isEmpty()){
+            Specification<Product> categorySpec = (root, query, criteriaBuilder) -> (
+                    criteriaBuilder.like(root.get("category").get("categoryName"), category)
+            );
+            spec = spec == null ? categorySpec : spec.and(categorySpec);
+        }
+
+        Page<Product> productPage = spec == null ? 
+            productRepository.findAll(pageDetails) : 
+            productRepository.findAll(spec, pageDetails);
+
+        List<Product>  products = productPage.getContent();
         if (products.isEmpty()) throw new APIExceptions("No products created till now.");
         List<ProductDTO> productDTOS= products.stream()
-                .map(product ->  modelMapper.map(products, ProductDTO.class))
+                .map(product ->  modelMapper.map(product, ProductDTO.class))
                 .toList();
 
         ProductResponse productResponse = new ProductResponse();
