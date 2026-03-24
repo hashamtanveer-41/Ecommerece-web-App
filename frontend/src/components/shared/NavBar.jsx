@@ -4,10 +4,13 @@ import {Badge} from "@mui/material";
 import {useState} from "react";
 import {RxCross2} from "react-icons/rx";
 import {IoIosMenu} from "react-icons/io";
+import {useSelector} from "react-redux";
 
 const NavBar = () =>{
     const path = useLocation();
     const [navBarOpen, seNavBarOpen] = useState(false);
+    const { cart } = useSelector((state) => state.carts);
+
     return (
         <div className="h-17.5 bg-custom-gradient  text-white z-50 flex items-center sticky top-0">
             <div className="lg:px-14 sm:px-8 px-4 w-full flex justify-between ">
@@ -36,7 +39,7 @@ const NavBar = () =>{
                         </Link>
                     </li>
 
-                    <li className="font-[500] transition-all duration-150">
+                    <li className="font-medium transition-all duration-150">
                         <Link className={`${
                             path === "/about"? "text-white font-semibold": "text-gray-200"
                         }`} to="/about">
@@ -44,7 +47,7 @@ const NavBar = () =>{
                         </Link>
                     </li>
 
-                    <li className="font-[500] transition-all duration-150">
+                    <li className="font-medium transition-all duration-150">
                         <Link className={`${
                             path === "/contact"? "text-white font-semibold": "text-gray-200"
                         }`} to="/contact">
@@ -52,13 +55,13 @@ const NavBar = () =>{
                         </Link>
                     </li>
 
-                    <li className="font-[500] transition-all duration-150">
+                    <li className="font-medium transition-all duration-150">
                         <Link className={`${
                             path === "/cart" ? "text-white font-semibold" : "text-gray-200"
                         }`} to="/cart">
                             <Badge
                                 showZero
-                                badgeContent={0}
+                                badgeContent={cart?.length || 0}
                                 color="primary"
                                 overlap="circular"
                                 anchorOrigin={{vertical: "top", horizontal: "right"}}
@@ -87,7 +90,7 @@ const NavBar = () =>{
                     {navBarOpen? (
                         <RxCross2 className="text-white text-3xl"/>
                     ): (
-                        <IoIosMenu className="text-white text-3xl"/>
+                        <IoIosMenu  className="text-white text-3xl"/>
                     )
                     }
                 </button>

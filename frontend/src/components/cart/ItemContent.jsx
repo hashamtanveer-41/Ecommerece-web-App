@@ -4,6 +4,8 @@ import SetQuantity from "./SetQuantity.jsx";
 import {useDispatch} from "react-redux";
 import {decreaseCartQuantity, increaseCartQuantity, removeFromCart} from "../../store/action/index.js";
 import toast from "react-hot-toast";
+import formatPrice from "../../utils/formatPrice.js";
+import truncateText from "../../utils/truncateText.jsx";
 
 const ItemContent = ({
                          productId,
@@ -46,13 +48,13 @@ const ItemContent = ({
     }
 
     return (
-        <div className="grid md:grid-cols-5 grid-cols-4 md:text-md text-sm gap-4 items-center border-[1px] border-slate-200 rounded-md lg:px-4 py-2 p-2">
+        <div className="grid md:grid-cols-5 grid-cols-4 md:text-md text-sm gap-4 items-center border border-slate-200 rounded-md lg:px-4 py-2 p-2">
 
             <div className="md:col-span-2 justify-self-start flex flex-col gap-2">
                 {/*Product Name*/}
                 <div className="flex md:flex-row flex-col lg:gap-4 sm:gap-3 gap-0 items-start">
                     <h3 className="lg:text-[17px] text-sm font-semibold text-slate-600">
-                        {productName}
+                        {truncateText(productName)}
                     </h3>
                 </div>
 
@@ -88,7 +90,7 @@ const ItemContent = ({
 
              {/*Special Price and price display*/}
             <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold">
-                {Number(specialPrice)}
+                {formatPrice(specialPrice)}
             </div>
 
             {/*Quantity*/}
@@ -121,7 +123,7 @@ const ItemContent = ({
 
             {/*Total Price being displayed*/}
             <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold">
-                {(Number(currentQuantity)*Number(specialPrice)).toFixed(2)}
+                {formatPrice( Number(currentQuantity)*Number(specialPrice))}
             </div>
 
         </div>

@@ -2,6 +2,8 @@ import {MdArrowBack, MdShoppingCart} from "react-icons/md";
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import ItemContent from "./ItemContent.jsx";
+import CartEmpty from "./CartEmpty.jsx";
+import formatPrice from "../../utils/formatPrice.js";
 
 const Cart = () => {
 
@@ -11,12 +13,12 @@ const Cart = () => {
     const newCart = {...cart};
 
     newCart.totalPrice = cart?.reduce(
-        (acc, curr) => acc*Number(curr?.specialPrice) *Number(curr?.quantity), 0
+        (acc, curr) => acc+Number(curr?.specialPrice) *Number(curr?.quantity), 0
     );
 
     // If cart is empty then returning from here
     if (!cart || cart.length === 0){
-        return <h1>Cart is Empty</h1>
+        return <CartEmpty />
     }
     return (
         <div className="lg:px-14 sm:px-8 px-4 py-10">
@@ -54,16 +56,14 @@ const Cart = () => {
             </div>
 
             <div className="border-t-[1.5px] border-slate-200 py-4 flex sm:flex-row sm:px-0 px-2 flex-col sm:justify-between gap-4">
-                <div>
-
-                </div>
+                <div> </div>
 
                 {/*Container Having all the information regarding the subtotal and Checkout button*/}
                 <div className="flex text-sm gap-1 flex-col">
                     {/*Subtotal Information*/}
                     <div className="flex justify-between w-full md:text-lg text-sm">
                         <span>Subtotal</span>
-                        <span>$400</span>
+                        <span>{formatPrice(newCart.totalPrice)}</span>
                     </div>
 
                     {/*Taxes information*/}
