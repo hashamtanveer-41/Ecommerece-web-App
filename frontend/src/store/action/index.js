@@ -73,22 +73,36 @@ export const addToCart = (data, qty=1,toast ) =>
 export const increaseCartQuantity = (data, toast, currentQuantity, setCurrentQuantity) =>
     (dispatch, getState) => {
         // Find the products
-        const {products } = getState().products;
+        const {products} = getState().products;
+        console.log(data);
         const getProduct = products.find(
             (item) => item.productId === data.productId
-        )
-
+        );
         // Checking if quantity exists then only updating the product quantity
-        const isQuantityExist = getProduct.quantity>= currentQuantity+1;
+        const isQuantityExist = getProduct.quantity >= currentQuantity+1;
         if (isQuantityExist){
             const newQuantity = currentQuantity+1;
+            // We update the quantity at three places
+            // First at state
             setCurrentQuantity(newQuantity);
+            // Then in redux store
             dispatch({
                 type: 'ADD_CART',
                 payload: {...data, quantity: newQuantity+1},
             });
+            // Then in the local Storage
             localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
         }else {
             toast.error("Quantity reached to limit.")
         }
 };
+
+export const decreaseCartQuantity = (data, newQuantity) =>
+    (dispatch, getState) => {
+        dispatch({
+            type: "ADD_CART",
+            payload: {...data, quantity: newQuantity},
+        })
+        localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+    };
+

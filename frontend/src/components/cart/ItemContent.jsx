@@ -2,7 +2,7 @@ import {useState} from "react";
 import {HiOutlineTrash} from "react-icons/hi";
 import SetQuantity from "./SetQuantity.jsx";
 import {useDispatch} from "react-redux";
-import {increaseCartQuantity} from "../../store/action/index.js";
+import {decreaseCartQuantity, increaseCartQuantity} from "../../store/action/index.js";
 import toast from "react-hot-toast";
 
 const ItemContent = ({
@@ -29,6 +29,19 @@ const ItemContent = ({
             setCurrentQuantity,
         ));
     };
+    const handleQtyDecrease = (cartItems) => {
+        if (currentQuantity > 1) {
+            const newQuantity = currentQuantity - 1;
+            setCurrentQuantity(newQuantity);
+            dispatch(decreaseCartQuantity(
+                cartItems, newQuantity
+            ))
+        }
+    }
+
+    const removeItemFromCart = (cartItems) => {
+
+    }
 
     return (
         <div className="grid md:grid-cols-5 grid-cols-4 md:text-md text-sm gap-4 items-center border-[1px] border-slate-200 rounded-md lg:px-4 py-2 p-2">
@@ -74,20 +87,31 @@ const ItemContent = ({
                     quantity={currentQuantity}
                     cardCounter={true}
                     handleQtyIncrease={() => handleQtyIncrease(
-                        image,
-                        productName,
-                        description,
-                        specialPrice,
-                        price,
-                        productId,
+                        {
+                            image,
+                            productName,
+                            description,
+                            specialPrice,
+                            price,
+                            productId,
+                        }
                     )}
-                    handleQtyDecrease={() => {}}
+                    handleQtyDecrease={() => {handleQtyDecrease(
+                        {
+                            image,
+                            productName,
+                            description,
+                            specialPrice,
+                            price,
+                            productId,
+                        }
+                    )}}
                 />
             </div>
 
             {/*Total Price being displayed*/}
             <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold">
-                {Number(currentQuantity)*Number(specialPrice)}
+                {(Number(currentQuantity)*Number(specialPrice)).toFixed(2)}
             </div>
 
         </div>
