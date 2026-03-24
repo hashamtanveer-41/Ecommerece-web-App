@@ -2,7 +2,7 @@ import {useState} from "react";
 import {HiOutlineTrash} from "react-icons/hi";
 import SetQuantity from "./SetQuantity.jsx";
 import {useDispatch} from "react-redux";
-import {decreaseCartQuantity, increaseCartQuantity} from "../../store/action/index.js";
+import {decreaseCartQuantity, increaseCartQuantity, removeFromCart} from "../../store/action/index.js";
 import toast from "react-hot-toast";
 
 const ItemContent = ({
@@ -40,7 +40,9 @@ const ItemContent = ({
     }
 
     const removeItemFromCart = (cartItems) => {
-
+        dispatch(removeFromCart(
+            cartItems, toast
+        ));
     }
 
     return (
@@ -67,8 +69,16 @@ const ItemContent = ({
                 <div className="flex items-start gap-5 mt-3">
                     <button
                         className="flex items-center font-semibold space-x-2 px-4 py-1 text-xs border border-rose-600 text-rose-600 rounded-md hover:bg-red-50 transition duration-300"
-                        onClick={()=> {}}
-
+                        onClick={()=> removeItemFromCart(
+                            {
+                                image,
+                                productName,
+                                description,
+                                specialPrice,
+                                price,
+                                productId,
+                            }
+                        )}
                     >
                         <HiOutlineTrash size={16} className="text-rose-600" />
                         Remove

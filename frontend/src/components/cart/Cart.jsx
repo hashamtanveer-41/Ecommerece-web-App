@@ -47,7 +47,7 @@ const Cart = () => {
             </div>
 
             {/*Items in cart */}
-            <div >
+            <div className="space-y-4">
                 {cart && cart.length>0 && cart.map((item, i)=>
                     <ItemContent key={i} {...item} />
                 )}
