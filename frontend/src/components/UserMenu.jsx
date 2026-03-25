@@ -8,6 +8,7 @@ import {FaShoppingCart} from "react-icons/fa";
 import {IoExit, IoExitOutline} from "react-icons/io5";
 import Backdrop from "./Backdrop.jsx";
 import {logoutUser} from "../store/action/index.js";
+import truncateText from "../utils/truncateText.jsx";
 
 const UserMenu = () => {
     const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const UserMenu = () => {
                     <MenuItem className="flex gap-2" onClick={handleClose}>
                         <BiUser className="text-xl"/>
                         <span className="font-bold text-[16px] mt-1">
-                            {user?.username}
+                            {truncateText(user?.username, 8)}
                         </span>
                     </MenuItem>
                 </Link>
