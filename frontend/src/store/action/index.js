@@ -137,3 +137,29 @@ export const authenticateSignInUser = (sendData, toast, reset, navigate, setLoad
     }
 }
 
+
+export const authenticateRegisterNewUser = (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
+    try {
+        setLoader(true);
+        const {data} = await api.post("/auth/signup", sendData);
+        dispatch({
+            type: "SIGNIN_USER",
+            payload: data
+        });
+        reset();
+        toast.success(data?.message  || "User register successfully");
+        navigate("/login")
+    }catch (error){
+        console.log(error);
+        navigate("/signup")
+        toast.error(error?.response?.data?.message || error?.response?.data?.password || "Internal Server Error");
+    }finally {
+        setLoader(false);
+    }
+}
+
+export const logoutUser = (navigate) => (dispatch) => {
+  dispatch({type: "LOG_OUT"});
+  localStorage.removeItem("auth");
+  navigate("/login");
+};

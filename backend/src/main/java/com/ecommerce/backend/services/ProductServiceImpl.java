@@ -50,13 +50,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getAllProducts(String keyword, String category, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-
-
-
-
-
-
-
         // Validate sortBy parameter - only allow valid Product fields
         List<String> validSortFields = List.of("productId", "productName", "price", "discount", "specialPrice", "quantity");
 
@@ -102,5 +95,53 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setPageSize(productPage.getSize());
 
         return productResponse;
+    }
+
+    @Override
+    public ProductResponse searchByCategory(Long categoryID) {
+        Category category =  categoryRepository.findById(categoryID)
+                .orElseThrow(()->
+                        new ResourceNotFoundException("Category", "category", categoryID));
+
+        List<Product> products = productRepository.findByCategoryOrderByPriceAsc(category);
+        List<ProductDTO> productDTOS= products.stream()
+                .map(product ->  modelMapper.map(product, ProductDTO.class))
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+        return productResponse;
+    }
+
+    @Override
+    public ProductResponse searchByKeyword(String keyword) {
+
+        List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%"+keyword+"%" );
+        List<ProductDTO> productDTOS= products.stream()
+                .map(product ->  modelMapper.map(product, ProductDTO.class))
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+        return productResponse;
+    }
+
+    @Override
+    public ProductDTO updateProduct(Product updatedProduct, Long productId) {
+        Product existingProduct =  productRepository.findById(productId)
+                .orElseThrow(()->
+                        new ResourceNotFoundException("Product", "product", productId));
+
+        existingProduct.setSpecialPrice(updatedProduct.getSpecialPrice());
+        existingProduct.setImage(updatedProduct.getImage());
+        existingProduct.setCategory(updatedProduct.getCategory());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setDiscount(updatedProduct.getDiscount());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setProductId(updatedProduct.getProductId());
+        existingProduct.setProductName(updatedProduct.getProductName());
+        existingProduct.setQuantity(updatedProduct.getQuantity());
+        productRepository.save(existingProduct);
+        return modelMapper.map(existingProduct, ProductDTO.class);
     }
 }
