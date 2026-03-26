@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import InputField from "../shared/InputField.jsx";
 import Spinners from "../shared/Spinners.jsx";
 import {Link} from "react-router-dom";
@@ -15,6 +15,7 @@ const AddAddressForm = ({address, setOpenAddressModal}) => {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: {errors}
     } = useForm({
         mode: "onTouched",
@@ -28,6 +29,17 @@ const AddAddressForm = ({address, setOpenAddressModal}) => {
             setOpenAddressModal,
         ));
     };
+
+    useEffect(() => {
+        if (address?.addressId){
+            setValue("buildingName", address?.buildingName);
+            setValue("city", address?.city);
+            setValue("street", address?.street);
+            setValue("pincode", address?.pincode);
+            setValue("state", address?.state);
+            setValue("country", address?.country);
+        }
+    }, []);
     return (
         <div className="">
             <form
@@ -36,7 +48,7 @@ const AddAddressForm = ({address, setOpenAddressModal}) => {
                 {/*Address PopUp*/}
                 <div className="flex justify-center items-center space-y-4 mb-4 text-2xl font-semibold text-slate-800 py-2 px-4 ">
                     <FaAddressCard className="mr-2 text-2xl" />
-                        Add Address
+                    {!address?.addressId? ("Add Address"):("Update Form")}
                 </div>
                 <hr className="mt-2 mb-5 text-black" />
                 <div className="flex flex-col gap-4">
@@ -121,7 +133,7 @@ const AddAddressForm = ({address, setOpenAddressModal}) => {
                                 <Spinners />  Loading...
                             </>
                         ) : (
-                            <>Save Address</>
+                            <>{!address?.addressId? ("Save Address"):("Update Form")}</>
                         )}
                     </button>
 

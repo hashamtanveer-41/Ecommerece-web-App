@@ -18,7 +18,6 @@ export const errorReducer = (state = initialState, action) => {
             return{
                 ...state,
                 btnLoader: true,
-                isLoading: true,
                 errorMessage: null,
                 categoryError: null,
             };

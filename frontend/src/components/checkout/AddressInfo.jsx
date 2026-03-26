@@ -3,18 +3,33 @@ import Skeleton from "../shared/Skeleton.jsx";
 import {FaAddressBook} from "react-icons/fa";
 import {AddressInfoModal} from "./AddressInfoModal.jsx";
 import AddAddressForm from "./AddAddressForm.jsx";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import AddressList from "./AddressList.jsx";
+import DeleteModal from "./DeleteModal.jsx";
+import toast from "react-hot-toast";
+import {deleteUserAddress} from "../../store/action/index.js";
 
-const AddressInfo = ({addresses}) => {
-    const noAddressExist = !address || address.length === 0;
-    const {isLoading, btnLoader} = useSelector((state) => state.errors);
+const AddressInfo = ({address}) => {
     const [openAddressModal, setOpenAddressModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState("");
+
     const addNewHandler = () => {
         setSelectedAddress("");
         setOpenAddressModal(true);
     };
+    const dispatch = useDispatch();
+    const onDeleteHandler=() => {
+        dispatch(deleteUserAddress(
+            toast,
+            selectedAddress?.addressId,
+            setOpenDeleteModal
+        ))
+    };
+
+    const noAddressExist = !address || address.length === 0;
+    const {isLoading, btnLoader} = useSelector((state) => state.errors);
+
     return (
         <div className="pt-4">
             {noAddressExist ? (
@@ -44,15 +59,30 @@ const AddressInfo = ({addresses}) => {
                             <Skeleton/>
                         </div>
                     ):(
+                        <>
                         <div className="space-y-4 pt-6">
                             <AddressList
-                                addresses={addresses}
+                                addresses={address}
                                 setSelectedAddress={setSelectedAddress}
-                                setOpenAddressModal={setOpenAddressModal()}
+                                setOpenAddressModal={setOpenAddressModal}
+                                setOpenDeleteModal = {setOpenDeleteModal}
                             />
                         </div>
+
+                    {address.length > 0  && (
+                        <div className="mt-4 ">
+                            <button
+                                className="px-4 py-2 bg-blue-600 rounded-md text-white font-medium hover:bg-blue-700 transition duration-300"
+                                onClick={addNewHandler}>
+                                Add more
+                            </button>
+                        </div>
+                        )}
+                        </>
                     )}
+
                 </div>
+
             )
             }
             <AddressInfoModal
@@ -64,6 +94,12 @@ const AddressInfo = ({addresses}) => {
                 setOpenAddressModal = {setOpenAddressModal}
             />
             </AddressInfoModal>
+            <DeleteModal
+                open={openDeleteModal}
+                loader={btnLoader}
+                setOpen={setOpenDeleteModal}
+                onDeleteHandler={onDeleteHandler}
+            />
         </div>
     )
 }

@@ -169,8 +169,14 @@ export const addUpdateUserAddress = (sendData, toast, addressId, setOpenAddressM
     // const {user} = getState().auth;
     dispatch({type: "BUTTON_LOADER"});
     try {
-        const {data} = await api.post("/addresses", sendData);
+        if (!addressId){
+            const {data} = await api.post("/addresses", sendData);
+        }else{
+            const {data} = await api.put(`/addresses/${addressId}`, sendData);
+        }
+        dispatch(getAllAddresses());
         toast.success("Address saved successfully");
+        dispatch({type: "IS_SUCCESS"});
     }catch (error){
         console.log(error);
         toast.error(error?.response?.data?.message || error?.response?.data?.password || "Internal Server Error");
@@ -198,3 +204,35 @@ export const getAllAddresses = (queryString)=>async (dispatch, getState) =>{
     }
 
 };
+
+export const selectUserAddress = (address) => {
+    return {
+        type: "SELECT_CHECKOUT_ADDRESS",
+        payload: address,
+    }
+}
+
+export const deleteUserAddress = (toast, addressId, setOpenDeleteModal) =>
+   async (dispatch, getState) => {
+       dispatch({type: "BUTTON_LOADER"});
+       try {
+            await api.delete(`/addresses/${addressId}`);
+           dispatch({type: "USER_ADDRESS"});
+           dispatch(getAllAddresses());
+           toast.success("Address deleted successfully");
+            dispatch(clearCheckoutAddress);
+           dispatch({type: "IS_SUCCESS"});
+       }catch (error){
+           console.log(error);
+           toast.error(error?.response?.data?.message || error?.response?.data?.password || "Failed to delete the address");
+           dispatch({type: "IS_ERROR", payload: null});
+       }finally {
+           setOpenDeleteModal(false);
+       }
+}
+
+export const clearCheckoutAddress= () => {
+    return {
+        type: "REMOVE_CHECKOUT_ADDRESS",
+    }
+}

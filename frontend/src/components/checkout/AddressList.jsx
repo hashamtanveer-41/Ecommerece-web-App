@@ -1,8 +1,25 @@
 import React from 'react'
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {FaBuilding, FaCheckCircle, FaEdit, FaStreetView, FaTrash} from "react-icons/fa";
+import {MdLocationCity, MdPinDrop, MdPublic} from "react-icons/md";
+import {selectUserAddress} from "../../store/action/index.js";
 
-const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal}) => {
+const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal, setOpenDeleteModal}) => {
     const dispatch = useDispatch();
+    const {selectedUserCheckoutAddress} = useSelector((state)=> state.auth);
+
+    const onDeleteHandler = (adresses)=>{
+        setSelectedAddress(adresses);
+        setOpenDeleteModal(true);
+    }
+    const onEditHandler = (adresses)=>{
+        setSelectedAddress(adresses);
+        setOpenAddressModal(true);
+    };
+
+    const handleAddressSelection = (adress)=>{
+        dispatch(selectUserAddress(adress));
+    };
 
     return (
         <div className="space-y-4">
@@ -11,10 +28,62 @@ const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal}) => {
                     key={address.addressId}
                     onClick={()=>handleAddressSelection(address)}
                         className={`p-4 border rounded-md cursor-pointer relative ${
-                            
+                            selectedUserCheckoutAddress?.addressId === address.addressId?
+                                "bg-green-200":"bg-white"
                         }`}
                 >
 
+                    <div className="flex items-start">
+                        <div className="space-y-1">
+                            <div className="flex items-center">
+                                <FaBuilding size={15} className="mr-2 text-gray-600" />
+                                <p className="font-semibold">
+                                    {address.buildingName}
+                                </p>
+                                {selectedUserCheckoutAddress?.addressId === address.addressId && (
+                                    <FaCheckCircle  className="text-green-500 ml-2"/>
+                                )}
+                            </div>
+
+                            <div className="flex items-center">
+                                <FaStreetView size={17} className="mr-2 text-gray-600" />
+                                <p>
+                                    {address.street}
+                                </p>
+                            </div>
+
+                            <div className="flex items-center">
+                                <MdLocationCity size={17} className="mr-2 text-gray-600" />
+                                <p>
+                                    {address.city}, {address.state}
+                                </p>
+                            </div>
+
+                            <div className="flex items-center">
+                                <MdPinDrop size={17} className="mr-2 text-gray-600" />
+                                <p>
+                                    {address.pincode}
+                                </p>
+                            </div>
+
+                            <div className="flex items-center">
+                                <MdPublic size={17} className="mr-2 text-gray-600" />
+                                <p>
+                                    {address.country}
+                                </p>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div className="flex gap-3 absolute top-4 right-2">
+                        <button onClick={()=> {onEditHandler(address)}}>
+                            <FaEdit size={18} className="text-teal-700"/>
+                        </button>
+                        <button onClick={()=> {onDeleteHandler(address)}}>
+                            <FaTrash size={18} className="text-rose-600"/>
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>
