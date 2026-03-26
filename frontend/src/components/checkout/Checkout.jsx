@@ -6,6 +6,7 @@ import {getAllAddresses} from "../../store/action/index.js";
 import {Button} from "@headlessui/react";
 import toast from "react-hot-toast";
 import Skeleton from "../shared/Skeleton.jsx";
+import ErrorPage from "../shared/ErrorPage.jsx";
 
 const Checkout = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -95,6 +96,7 @@ const Checkout = () => {
                     </button>
                 )}
             </div>
+            {errorMessage && <ErrorPage message={errorMessage} /> }
         </div>
     )
 }
