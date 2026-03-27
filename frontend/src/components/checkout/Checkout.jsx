@@ -7,6 +7,7 @@ import {Button} from "@headlessui/react";
 import toast from "react-hot-toast";
 import Skeleton from "../shared/Skeleton.jsx";
 import ErrorPage from "../shared/ErrorPage.jsx";
+import PaymentMethod from "./PaymentMethod.jsx";
 
 const Checkout = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -22,11 +23,11 @@ const Checkout = () => {
     }
 
     const handleNext= () =>{
-        if (activeStep === 0 && selectedUserCheckoutAddress){
+        if (activeStep === 0 && !selectedUserCheckoutAddress){
             toast.error("Please select checkout Address to proceed.")
             return;
         }
-        if (activeStep === 1 && (selectedUserCheckoutAddress || !paymentMethod)){
+        if (activeStep === 1 && (!selectedUserCheckoutAddress || !paymentMethod)){
             toast.error("Please select checkout Address to proceed.")
             return;
         }
@@ -58,15 +59,17 @@ const Checkout = () => {
             ):(
                 <div className="mt-5">
                     {activeStep===0 && <AddressInfo address={address}/>}
+                    {activeStep===1 && <PaymentMethod />}
                 </div>
             )}
 
 
             <div
-                className="flex justify-between items-center px-4 fixed z-50 h-24 bottom-0 bg-white left-0 w-full py-4 border-slate-200"
-                style={{boxShadow: "0 -2px  4px rgba(100, 100, 100 ,0.15)"}}
+                className='flex justify-between items-center px-4 fixed z-50 h-24 bottom-0 bg-white left-0 w-full py-4 border-slate-200'
+                style={{ boxShadow: "0 -2px 4px rgba(100, 100, 100, 0.15)" }}
             >
                 <Button
+                    className={`bg-custom-blue font-semibold px-6 h-10 rounded-md text-white ${activeStep === 0 && "opacity-60"}`}
                     variant="outlined"
                     disabled={activeStep === 0}
                     onClick={handleBack}
