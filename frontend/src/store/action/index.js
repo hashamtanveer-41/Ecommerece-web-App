@@ -206,6 +206,7 @@ export const getAllAddresses = (queryString)=>async (dispatch, getState) =>{
 };
 
 export const selectUserAddress = (address) => {
+    localStorage.setItem("CHECKOUT_ADDRESS", JSON.stringify(address))
     return {
         type: "SELECT_CHECKOUT_ADDRESS",
         payload: address,
@@ -284,14 +285,11 @@ export const getUserCart = () =>
 
 
 export const createStripePaymentSecret =
-    (totalPrice) =>
-        async (dispatch, getState) => {
+    (sendData) =>
+        async (dispatch) => {
     try {
         dispatch({type: "IS_FETCHING"});
-        const {data} = await api.post("/order/stripe-client-secret", {
-            "amount": Number(totalPrice),
-            "currency": "usd"
-        });
+        const {data} = await api.post("/order/stripe-client-secret", sendData);
         const clientSecret = data?.clientSecret ?? data;
         dispatch({type: "CLIENT_SECRET_KEY", payload: clientSecret});
         localStorage.setItem("clientSecret", JSON.stringify(clientSecret));
@@ -306,21 +304,22 @@ export const createStripePaymentSecret =
 
 
 export const stripePaymentConfirmation =
-    (setErrorMessage, setLoading, toast) =>
+    (sendData, setErrorMessage, setLoading, toast) =>
         async (dispatch, getState) => {
             try {
-                const {response} = await api.post("/order/users/payments/online   ", {});
+                const response = await api.post("/order/users/payments/online   ", sendData);
                 if (response.data){
+                    localStorage.removeItem("CHECKOUT_ADDRESS");
                     localStorage.removeItem("cartItems");
-                    localStorage.removeItem("client-secret");
+                    localStorage.removeItem("clientSecret");
+                    dispatch({type: "REMOVE_CLIENT_SECRET_ADDRESS"});
+                    dispatch({type: "CLEAR_CART"});
+                    toast.success("Order Accepted");
+                }else{
+                    setErrorMessage("Payment Failed. Please try again")
                 }
-                const clientSecret = data?.clientSecret ?? data;
-                dispatch({type: "CLIENT_SECRET_KEY", payload: clientSecret});
-                localStorage.setItem("clientSecret", JSON.stringify(clientSecret));
-                dispatch({type: "IS_SUCCESS"});
             }catch (error){
-                console.log(error);
-                toast.error(error?.response?.data?.message ||"Failed to create Client secret");
-                dispatch({type: "IS_ERROR", payload: error?.response?.data?.message || "Failed to create Client secret"});
+                setErrorMessage("Payment Failed. Please try again")
+
             }
         }

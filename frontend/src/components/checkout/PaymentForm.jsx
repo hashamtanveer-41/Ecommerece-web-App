@@ -17,6 +17,11 @@ const PaymentForm = ({clientSecret, totalPrice}) => {
         }
 
         const {error: submitError} = await elements.submit();
+        if (submitError){
+            setErrorMessage(submitError.message || "Unable to submit payment details.");
+            return;
+        }
+
         const {error} = await stripe.confirmPayment({
             elements, clientSecret,
             confirmParams: {
@@ -25,7 +30,7 @@ const PaymentForm = ({clientSecret, totalPrice}) => {
 
         });
         if (error){
-            setErrorMessage(error);
+            setErrorMessage(error.message || "Payment failed. Please try again.");
             return false;
         }
     }
