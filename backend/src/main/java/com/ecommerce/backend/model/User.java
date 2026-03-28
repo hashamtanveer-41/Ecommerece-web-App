@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class User {
     @NotBlank
     @Size(max = 20)
     @Column(name = "username")
-    private String username;
+    private String userName;
 
     @NotBlank
     @Size(max = 50)
@@ -36,16 +37,20 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public User(String password, String username, String email) {
+    public User(String password, String userName, String email) {
         this.password = password;
-        this.username = username;
+        this.userName = userName;
         this.email = email;
     }
 
-    @ManyToMany
-    @JoinTable(name = "user_role")
-    private Set<Role> roles;
-
+    @Setter
+    @Getter
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
     @OneToMany
     private Set<Product> products;
 }

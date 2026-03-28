@@ -8,11 +8,15 @@ import toast from "react-hot-toast";
 import Skeleton from "../shared/Skeleton.jsx";
 import ErrorPage from "../shared/ErrorPage.jsx";
 import PaymentMethod from "./PaymentMethod.jsx";
+import OrderSummary from "./OrderSummary.jsx";
+import StripePayment from "./StripePayment.jsx";
+import PaypalPayment from "./PaypalPayment.jsx";
 
 const Checkout = () => {
     const [activeStep, setActiveStep] = useState(0);
+    const {paymentMethod} = useSelector((state) => state.payment);
     const dispatch = useDispatch();
-    const paymentMethod = false;
+    const {cart, totalPrice} = useSelector((state) => state.carts)
     const {errorMessage, isLoading } = useSelector((state) => state.errors);
     const {address, selectedUserCheckoutAddress} = useSelector((state) => state.auth)
     useEffect(() => {
@@ -60,6 +64,16 @@ const Checkout = () => {
                 <div className="mt-5">
                     {activeStep===0 && <AddressInfo address={address}/>}
                     {activeStep===1 && <PaymentMethod />}
+                    {activeStep===2 && <OrderSummary cart={cart} paymentMethod={paymentMethod} address={selectedUserCheckoutAddress} totalPrice={totalPrice} />}
+                    {activeStep === 3 &&
+                            <>
+                                {paymentMethod === "Stripe"? (
+                                   <StripePayment />
+                                ):(
+                                    <PaypalPayment />
+                                )}
+                            </>
+                    }
                 </div>
             )}
 

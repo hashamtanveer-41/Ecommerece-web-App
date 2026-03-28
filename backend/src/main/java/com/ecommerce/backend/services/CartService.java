@@ -1,4 +1,9 @@
 package com.ecommerce.backend.services;
 
-public class CartService {
+import com.ecommerce.backend.payload.CartItemDTO;
+
+import java.util.List;
+
+public interface CartService {
+    String addOrUpdateCartWithItems(List<CartItemDTO> cartDTOS);
 }

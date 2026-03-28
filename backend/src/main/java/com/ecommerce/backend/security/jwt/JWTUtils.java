@@ -21,7 +21,8 @@ import java.util.logging.Logger;
 @Component
 public class JWTUtils {
 
-    private static final Logger logger = (Logger) LoggerFactory.getLogger(JWTUtils.class);
+//    private static final Logger logger = (Logger) LoggerFactory.getLogger(JWTUtils.class);
+
     @Value("${spring.app.jwtSecret}")
     private String jwtSecret;
 
@@ -40,13 +41,12 @@ public class JWTUtils {
         }
     }
     // Generate Token from the username
-    public String generateTokenFromUsername(UserDetails userDetails){
-        String username =userDetails.getUsername();
-        return Jwts.builder().
-                subject(username).
-                issuedAt(new Date())
-                .expiration(new Date(((new Date().getTime()) + jwtExpirationMs)))
-                .signWith((SecretKey) key())
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key())
                 .compact();
     }
     //Getting username from the JWT Token
@@ -58,8 +58,17 @@ public class JWTUtils {
     public Key key(){
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
-    public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
-        return null;
+
+
+    public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+        ResponseCookie cookie = ResponseCookie.from(jwtCookieName, jwt)
+                .path("/api")
+                .maxAge(24 * 60 * 60)
+                .httpOnly(false)
+                .secure(false)
+                .build();
+        return cookie;
     }
     //Validate JWT token
     public boolean validateJwtToken(String authToken){
@@ -71,9 +80,22 @@ public class JWTUtils {
                     .parseSignedClaims(authToken);
             return true;
         }catch (Exception e){
-            logger.severe(e.getMessage());
+//            logger.severe(e.getMessage());
         }
         return false;
     }
-
+    public String getJwtFromCookies(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, jwtCookieName);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return null;
+        }
+    }
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build().parseSignedClaims(token)
+                .getPayload().getSubject();
+    }
 }

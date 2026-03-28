@@ -243,3 +243,84 @@ export const addPaymentMethod= (method) => {
         payload: method,
     }
 }
+
+export const createUserCart = (sendCartItems) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: "IS_FETCHING" });
+        await api.post('/cart/create', sendCartItems);
+        await dispatch(getUserCart());
+    } catch (error) {
+        console.log(error);
+        dispatch({
+            type: "IS_ERROR",
+            payload: error?.response?.data?.message || "Failed to create cart items",
+        });
+    }
+};
+
+
+export const getUserCart = () =>
+    async  (dispatch, getState) => {
+        try {
+            dispatch({type: "IS_FETCHING"});
+            const {data} = await api.get('/carts/users/cart');
+
+            dispatch({
+                type: "GET_USER_CART_PRODUCTS",
+                payload: data.products,
+                totalPrice: data.totalPrice,
+                cartId: data.cartId
+            })
+            localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+            dispatch({type: "IS_SUCCESS"});
+        } catch (error) {
+            console.log(error);
+            dispatch({
+                type: "IS_ERROR",
+                payload: error?.response?.data?.message || "Failed to fetch cart items",
+            });
+        }
+    }
+
+
+export const createStripePaymentSecret =
+    (totalPrice) =>
+        async (dispatch, getState) => {
+    try {
+        dispatch({type: "IS_FETCHING"});
+        const {data} = await api.post("/order/stripe-client-secret", {
+            "amount": Number(totalPrice),
+            "currency": "usd"
+        });
+        const clientSecret = data?.clientSecret ?? data;
+        dispatch({type: "CLIENT_SECRET_KEY", payload: clientSecret});
+        localStorage.setItem("clientSecret", JSON.stringify(clientSecret));
+        dispatch({type: "IS_SUCCESS"});
+    }catch (error){
+        console.log(error);
+        toast.error(error?.response?.data?.message ||"Failed to create Client secret");
+        dispatch({type: "IS_ERROR", payload: error?.response?.data?.message || "Failed to create Client secret"});
+    }
+}
+
+
+
+export const stripePaymentConfirmation =
+    (setErrorMessage, setLoading, toast) =>
+        async (dispatch, getState) => {
+            try {
+                const {response} = await api.post("/order/users/payments/online   ", {});
+                if (response.data){
+                    localStorage.removeItem("cartItems");
+                    localStorage.removeItem("client-secret");
+                }
+                const clientSecret = data?.clientSecret ?? data;
+                dispatch({type: "CLIENT_SECRET_KEY", payload: clientSecret});
+                localStorage.setItem("clientSecret", JSON.stringify(clientSecret));
+                dispatch({type: "IS_SUCCESS"});
+            }catch (error){
+                console.log(error);
+                toast.error(error?.response?.data?.message ||"Failed to create Client secret");
+                dispatch({type: "IS_ERROR", payload: error?.response?.data?.message || "Failed to create Client secret"});
+            }
+        }
