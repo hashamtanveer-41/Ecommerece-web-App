@@ -44,7 +44,7 @@ public class StripeServiceImpl implements StripeService{
                                     .setLine1(stripePaymentDTO.getAddress().getStreet())
                                     .setCity(stripePaymentDTO.getAddress().getState())
                                     .setPostalCode(stripePaymentDTO.getAddress().getPincode())
-                                    .setCountry(stripePaymentDTO.getAddress().getCountry)
+                                    .setCountry(stripePaymentDTO.getAddress().getCountry())
                                     .build()
                     )
                     .build();

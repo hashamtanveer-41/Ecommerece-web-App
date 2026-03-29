@@ -20,11 +20,8 @@ public class Role {
     private Integer roleId;
 
     @ToString.Exclude
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // Annotation to persist the Enum as string type not int
     @Column(length = 20, name = "role_name")
     private AppRole roleName;
 
-    public Role(AppRole roleName) {
-        this.roleName = roleName;
-    }
 }

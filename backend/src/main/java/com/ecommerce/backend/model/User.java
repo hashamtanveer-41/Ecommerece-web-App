@@ -6,11 +6,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+    }
+)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,7 +44,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public User(String password, String userName, String email) {
+    public User( String userName, String email,String password) {
         this.password = password;
         this.userName = userName;
         this.email = email;
@@ -51,6 +58,16 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-    @OneToMany
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user" ,cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
     private Set<Product> products;
+
+    @Getter
+    @Setter
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable( name = "user_address",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private List<Address> addresses = new ArrayList<>();
 }

@@ -62,13 +62,18 @@ public class JWTUtils {
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookieName, jwt)
+        return ResponseCookie.from(jwtCookieName, jwt)
                 .path("/api")
                 .maxAge(24 * 60 * 60)
                 .httpOnly(false)
                 .secure(false)
                 .build();
-        return cookie;
+    }
+
+    public ResponseCookie getCleanJWTToken() {
+        return ResponseCookie.from(jwtCookieName, null)
+                .path("/api")
+                .build();
     }
     //Validate JWT token
     public boolean validateJwtToken(String authToken){
