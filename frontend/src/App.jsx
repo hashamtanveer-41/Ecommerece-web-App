@@ -13,6 +13,11 @@ import PrivateRoute from "./components/PrivateRoute.jsx";
 import Register from "./components/auth/Register.jsx";
 import Checkout from "./components/checkout/Checkout.jsx";
 import PaymentConfirmation from "./components/checkout/PaymentConfirmation.jsx";
+import AdminLayout from "./components/admin/AdminLayout.jsx";
+import Dashboard from "./components/admin/dashboard/Dashboard.jsx";
+import AdminProducts from "./components/admin/products/AdminProducts.jsx";
+import Sellers from "./components/admin/sellers/Sellers.jsx";
+import Category from "./components/admin/categories/Category.jsx";
 
 function App() {
 
@@ -34,7 +39,17 @@ function App() {
                   </Route>
 
                   <Route path="/" element={<PrivateRoute publicPage />} >
-                  <Route path="/register" element={<Register />}/>
+                     <Route path="/register" element={<Register />}/>
+                    <Route path="/login" element={<Register />}/>
+                  </Route>
+
+                  <Route path="/" element={<PrivateRoute adminOnly={true} />} >
+                      <Route path="/admin" element={<AdminLayout  />}>
+                          <Route path="" element={<Dashboard />} />
+                          <Route path="products" element={<AdminProducts />} />
+                          <Route path="sellers" element={<Sellers />} />
+                          <Route path="categories" element={<Category />} />
+                      </Route>
                   </Route>
               </Routes>
           </Router>

@@ -1,4 +1,10 @@
 package com.ecommerce.backend.services;
 
-public class AnalyticsService {
+import com.ecommerce.backend.payload.AnalyticsResponse;
+import org.springframework.stereotype.Service;
+
+
+public interface AnalyticsService {
+
+    AnalyticsResponse getAnalyticsData();
 }
