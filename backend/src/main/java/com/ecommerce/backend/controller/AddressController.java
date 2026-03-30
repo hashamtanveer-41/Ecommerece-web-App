@@ -49,4 +49,17 @@ public class AddressController {
         return new ResponseEntity<>(savedAddressDTO, HttpStatus.OK);
     }
 
+    @PutMapping("/addresses/{addressId}")
+    public ResponseEntity<AddressDTO> updateAddress(@PathVariable Long addressId,
+                                                          @RequestBody AddressDTO addressDTO
+    ){
+        AddressDTO savedAddressDTO = addressService.updateAddress(addressId, addressDTO);
+        return new ResponseEntity<>(savedAddressDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/addresses/{addressId}")
+    public ResponseEntity<String> deleteAddress(@PathVariable Long addressId){
+        String status = addressService.deleteAddress(addressId);
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 }
