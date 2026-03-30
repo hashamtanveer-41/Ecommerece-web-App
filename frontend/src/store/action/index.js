@@ -1,10 +1,10 @@
 import api from "../../api/api.jsx";
 import toast from "react-hot-toast";
 
-export const fetchProducts = (queryString)=>async (dispatch) =>{
-    try{
-        dispatch({type: "IS_FETCHING"})
-        const {data} = await api.get(`/public/products?${queryString}`);
+export const fetchProducts = (queryString) => async (dispatch) => {
+    try {
+        dispatch({ type: "IS_FETCHING" });
+        const { data } = await api.get(`/public/products?${queryString}`);
         dispatch({
             type: "FETCH_PRODUCTS",
             payload: data.content,
@@ -12,17 +12,16 @@ export const fetchProducts = (queryString)=>async (dispatch) =>{
             pageSize: data.pageSize,
             totalElements: data.totalElements,
             totalPages: data.totalPages,
-            lastPages: data.lastPages,
+            lastPage: data.lastPage,
         });
-        dispatch({type: "IS_SUCCESS"});
-    }catch (error){
-        console.log(error.message)
+        dispatch({ type: "IS_SUCCESS" });
+    } catch (error) {
+        console.log(error);
         dispatch({
             type: "IS_ERROR",
-            payload: error?.response?.data?.message || "Failed to fetch",
+            payload: error?.response?.data?.message || "Failed to fetch products",
         });
     }
-
 };
 
 export const fetchCategories = (queryString)=>async (dispatch) =>{
@@ -166,7 +165,7 @@ export const logoutUser = (navigate) => (dispatch) => {
 
 export const addUpdateUserAddress = (sendData, toast, addressId, setOpenAddressModal) =>
      async (dispatch, getState) => {
-    // const {user} = getState().auth;
+     const {user} = getState().auth;
     dispatch({type: "BUTTON_LOADER"});
     try {
         if (!addressId){
@@ -189,7 +188,7 @@ export const addUpdateUserAddress = (sendData, toast, addressId, setOpenAddressM
 export const getAllAddresses = (queryString)=>async (dispatch, getState) =>{
     try{
         dispatch({type: "IS_FETCHING"})
-        const {data} = await api.get(`/addresses`);
+        const {data} = await api.get(`/users/addresses`);
         dispatch({
             type: "USER_ADDRESS",
             payload: data

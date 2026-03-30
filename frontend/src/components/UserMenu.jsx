@@ -11,11 +11,12 @@ import {logoutUser} from "../store/action/index.js";
 import truncateText from "../utils/truncateText.jsx";
 
 const UserMenu = () => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const { user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const {user} = useSelector((state) => state.auth);
-    const open = Boolean(anchorEl);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -65,19 +66,18 @@ const UserMenu = () => {
                     </MenuItem>
                 </Link>
 
-                    <MenuItem className="flex gap-2" onClick={logOutHandler}>
-                        <div
-                            className="font-semibold w-full flex gap-2 items-center bg-button-gradient px-4 py-2 rounded-md text-white ">
-                            <IoExitOutline className="text-xl"/>
-                            <span className="font-semibold">
-                                LogOut
-                            </span>
-                        </div>
-                    </MenuItem>
+                <MenuItem className="flex gap-2"
+                          onClick={logOutHandler}>
+                    <div className='font-semibold w-full flex gap-2 items-center bg-button-gradient px-4 py-1 text-white rounded-xs'>
+                        <IoExitOutline className='text-xl'/>
+                        <span className='font-bold text-[16px] mt-1'>
+                        LogOut
+                    </span>
+                    </div>
+                </MenuItem>
             </Menu>
 
             {open && <Backdrop />}
-
         </div>
     );
 }

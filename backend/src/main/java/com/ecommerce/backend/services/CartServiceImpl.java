@@ -50,13 +50,13 @@ public class CartServiceImpl implements CartService{
             existingCart.setUser(authUtil.loggedInUser());
              existingCart =cartRepository.save(existingCart);
         }else {
-            cartRepository.deleteAllByCartId(existingCart.getCartId());
+            cartItemRepository.deleteAllByCartId(existingCart.getCartId());
         }
         double totalPrice = 0.00;
          // Process each item in the request to add to the cart
         for (CartItemDTO cartItemDTO: cartDTOS){
                  Long productId = cartItemDTO.getProductId();
-            Integer quantity = cartItemDTO.getQuantity();
+                 Integer quantity = cartItemDTO.getQuantity();
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "product", productId));
 

@@ -33,10 +33,11 @@ const Filter = ({categories})=>{
                 searchParams.delete("keyword");
             }
             navigate(`${pathName}?${searchParams.toString()}`)
-            return ()=>{
-                clearTimeout(handler)
-            }
+
         } ,700);
+        return ()=>{
+            clearTimeout(handler)
+        }
     }, [searchParams, searchTerm, navigate, pathName])
     const handleCategoryChange = (event)=>{
         const selectedCategory = event.target.value;
