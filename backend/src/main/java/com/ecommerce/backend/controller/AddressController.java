@@ -1,10 +1,52 @@
 package com.ecommerce.backend.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ecommerce.backend.model.User;
+import com.ecommerce.backend.payload.AddressDTO;
+import com.ecommerce.backend.services.AddressService;
+import com.ecommerce.backend.util.AuthUtil;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class AddressController {
+
+    private final AddressService addressService;
+    private final AuthUtil authUtil;
+
+    public AddressController(AddressService addressService, AuthUtil authUtil) {
+        this.addressService = addressService;
+        this.authUtil = authUtil;
+    }
+
+    @PostMapping("/addresses")
+    public ResponseEntity<AddressDTO> createAddress(@Valid @RequestBody AddressDTO addressDTO){
+        User user = authUtil.loggedInUser();
+        AddressDTO savedAddressDTO = addressService.createAddress(addressDTO, user);
+        return new ResponseEntity<>(savedAddressDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/addresses")
+    public ResponseEntity<List<AddressDTO>> getAllAddresses(){
+        List<AddressDTO> savedAddressDTO = addressService.getAllAddresses();
+        return new ResponseEntity<>(savedAddressDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/addresses/{addressId}")
+    public ResponseEntity<AddressDTO> getAddressById(@PathVariable Long addressId){
+        AddressDTO savedAddressDTO = addressService.getAddressById(addressId);
+        return new ResponseEntity<>(savedAddressDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/addresses")
+    public ResponseEntity<List<AddressDTO>> getAddressByUser(){
+        User user = authUtil.loggedInUser();
+        List<AddressDTO> savedAddressDTO = addressService.getAddressessByUser(user);
+        return new ResponseEntity<>(savedAddressDTO, HttpStatus.OK);
+    }
 
 }

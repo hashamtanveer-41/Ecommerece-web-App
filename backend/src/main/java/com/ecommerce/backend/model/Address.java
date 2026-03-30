@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -54,9 +55,9 @@ public class Address {
         this.street = street;
     }
 
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 
