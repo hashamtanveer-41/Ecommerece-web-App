@@ -1,10 +1,70 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {MdAddShoppingCart} from "react-icons/md";
+import {useSelector} from "react-redux";
+import Loader from "../../shared/Loader.jsx";
+import {FaBoxOpen} from "react-icons/fa";
+import {DataGrid} from "@mui/x-data-grid";
+import { adminProductTableColumn} from "../../helper/TableColumns.jsx";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {useDashboardProductFilter} from "../../../hooks/useProductFilter.js";
+import Modal from "../../shared/Modal.jsx";
 
 const AdminProducts = () => {
-    const products = [ { "productId": 1, "productName": "iPhone 15 Pro", "image": "http://localhost:8080/images/iphone15.jpg", "quantity": 49, "price": 999.0, "discount": 5.0, "specialPrice": 949.05 }, { "productId": 2, "productName": "Samsung S24", "image": "http://localhost:8080/images/s24.jpg", "quantity": 30, "price": 1199.0, "discount": 10.0, "specialPrice": 1079.1 }, { "productId": 3, "productName": "Sony WH-1000XM5", "image": "http://localhost:8080/images/sony_hq.jpg", "quantity": 100, "price": 349.0, "discount": 0.0, "specialPrice": 349.0 }, { "productId": 4, "productName": "MacBook Air M3", "image": "http://localhost:8080/images/macbook.jpg", "quantity": 24, "price": 1099.0, "discount": 5.0, "specialPrice": 1044.05 }, { "productId": 5, "productName": "Dell XPS 15", "image": "http://localhost:8080/images/dellxps.jpg", "quantity": 15, "price": 1500.0, "discount": 10.0, "specialPrice": 1350.0 } ];
-    const pagination = {"pageNumber": 0, "pageSize": 5, "totalElements": 50, "totalPages": 10, "lastPage": false}
-    const emptyOrder = !products || products?.length === 0;
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const params = new URLSearchParams(searchParams);
+    const pathname = useLocation().pathname;
+
+    const {products, pagination} = useSelector((state) => state.products);
+    const {isLoading, errorMessage } = useSelector((state) => state.errors);
+
+    const emptyProduct = !products || products?.length === 0;
+
+
+    const [selectedItem, setSelectedItem] =useState("");
+    const [updateOpenModal, setUpdateOpenModal] = useState(false);
+
+    const [currentPage, setCurrentPage] = useState(
+        pagination?.pageNumber +1 || 1
+    );
+
+    const tableRecords = products?.map((item) => {
+        return {
+            id: item.productId,
+            productName: item.productName,
+            description: item.description,
+            discount: item.discount,
+            image: item.image,
+            price: item.price,
+            quantity: item.quantity,
+            specialPrice: item.specialPrice,
+        }
+    });
+
+    useDashboardProductFilter();
+    const handlePaginationChange = (paginationModel) => {
+        const page = paginationModel.page +1;
+        setCurrentPage(page);
+        params.set("page", page.toString())
+        navigate(`${pathname}?${params.toString()}`)
+    };
+    const handleEdit = (product)=> {
+        setSelectedItem(product)
+        setUpdateOpenModal(true)
+    }
+    const handleDelete = (product)=> {
+        setSelectedItem(product)
+        setUpdateOpenModal(true)
+    }
+    const handleImageUpload  = (product) => {
+        setSelectedItem(product)
+        setUpdateOpenModal(true)
+    }
+
+    const handleProductView = (product) => {
+        setSelectedItem(product)
+        setUpdateOpenModal(true)
+    }
 
     return (
         <div >
@@ -14,6 +74,69 @@ const AdminProducts = () => {
                     Add Product
                 </button>
             </div>
+
+            {!emptyProduct && (
+                <h1 className="text-slate-800 text-3xl text-center font-semibold pb-6 uppercase">
+                    All Products
+                </h1>
+            )}
+            {isLoading ? (
+                <Loader />
+            ):(
+                <>
+                {emptyProduct ? (
+                        <div className="flex flex-col items-center justify-center text-gray-600 py-10">
+                            <FaBoxOpen size={50} className="mb-3 "/>
+                          <h2 className="text-2xl font-semibold">
+                              No product exist
+                          </h2>
+                        </div>
+                    ): (
+                        <div className="max-w-full">
+                            <DataGrid
+                                className="w-full"
+                                rows={tableRecords}
+                                columns={adminProductTableColumn(
+                                    handleEdit,
+                                    handleDelete,
+                                    handleImageUpload,
+                                    handleProductView
+                                )}
+                                paginationMode="server"
+                                rowCount={pagination?.totalElements || 0}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: pagination?.pageSize || 10,
+                                            page: currentPage -1,
+                                        },
+                                    },
+
+                                }}
+                                onPaginationModelChange={handlePaginationChange}
+                                disableColumnResize
+                                pageSizeOptions={[pagination?.pageSize || 10]}
+                                pagination
+                                paginationOptions={{
+                                    showFirstButton: true,
+                                    showLastButton: true,
+                                    hideNextButton: currentPage === pagination?.totalPages,
+
+                                }}
+                                disableRowSelectionOnClick
+                            />
+                        </div>
+                    )}
+                </>
+            )}
+            <Modal
+            open={updateOpenModal}
+            setOpen={setUpdateOpenModal}
+            title="Update Product"
+            >
+
+
+            </Modal>
         </div>
     )
 }
