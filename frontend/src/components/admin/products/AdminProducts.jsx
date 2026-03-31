@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {MdAddShoppingCart} from "react-icons/md";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../shared/Loader.jsx";
 import {FaBoxOpen} from "react-icons/fa";
 import {DataGrid} from "@mui/x-data-grid";
@@ -9,22 +9,30 @@ import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {useDashboardProductFilter} from "../../../hooks/useProductFilter.js";
 import Modal from "../../shared/Modal.jsx";
 import AddProductForm from "./AddProductForm.jsx";
+import DeleteModal from "../../checkout/DeleteModal.jsx";
+import {deleteProductFromDashboard} from "../../../store/action/index.js";
+import toast from "react-hot-toast";
+import ImageUploadForm from "./ImageUploadForm.jsx";
 
 const AdminProducts = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const params = new URLSearchParams(searchParams);
     const pathname = useLocation().pathname;
+    const dispatch = useDispatch();
 
     const {products, pagination} = useSelector((state) => state.products);
     const {isLoading, errorMessage } = useSelector((state) => state.errors);
 
     const emptyProduct = !products || products?.length === 0;
 
-
     const [selectedProduct, setSelectedProduct] =useState("");
     const [updateOpenModal, setUpdateOpenModal] = useState(false);
     const [openAddModal, setOpenAddModal] = useState(false);
+    const [openImageModal, setOpenImageModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [loader, setLoader] = useState(false);
+
 
     const [currentPage, setCurrentPage] = useState(
         pagination?.pageNumber +1 || 1
@@ -56,11 +64,11 @@ const AdminProducts = () => {
     }
     const handleDelete = (product)=> {
         setSelectedProduct(product)
-        setUpdateOpenModal(true)
+        setOpenDeleteModal(true)
     }
     const handleImageUpload  = (product) => {
         setSelectedProduct(product)
-        setUpdateOpenModal(true)
+        setOpenImageModal(true)
     }
 
     const handleProductView = (product) => {
@@ -68,6 +76,11 @@ const AdminProducts = () => {
         setUpdateOpenModal(true)
     }
 
+    const onDeleteHandler = () => {
+        dispatch(deleteProductFromDashboard(
+            setLoader, selectedProduct?.id, toast, setOpenDeleteModal
+        ))
+    }
     return (
         <div >
             <div className="pt-6 pb-10 flex justify-end">
@@ -144,6 +157,27 @@ const AdminProducts = () => {
                     update={updateOpenModal}
                 />
             </Modal>
+
+            <Modal
+                open={openImageModal}
+                setOpen={setOpenImageModal}
+                title={"Upload Image of Product"}
+            >
+                <ImageUploadForm
+                    setOpen={setOpenImageModal}
+                    product={selectedProduct}
+                    update={updateOpenModal}
+                />
+            </Modal>
+
+            <DeleteModal
+                open={openDeleteModal}
+                setOpen={setOpenDeleteModal}
+                title={"Delete Product"}
+                onDeleteHandler={onDeleteHandler}
+                loader={loader}
+            >
+            </DeleteModal>
         </div>
     )
 }

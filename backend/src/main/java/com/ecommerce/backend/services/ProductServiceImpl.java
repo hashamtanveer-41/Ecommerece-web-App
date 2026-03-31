@@ -11,6 +11,7 @@ import com.ecommerce.backend.payload.ProductDTO;
 import com.ecommerce.backend.payload.ProductResponse;
 import com.ecommerce.backend.repostories.CartRepository;
 import com.ecommerce.backend.repostories.CategoryRepository;
+import com.ecommerce.backend.repostories.OrderItemRepository;
 import com.ecommerce.backend.repostories.ProductRepository;
 import com.ecommerce.backend.util.AuthUtil;
 import org.modelmapper.ModelMapper;
@@ -30,7 +31,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
+    @Autowired
+    private OrderItemRepository orderItemRepository;
     @Autowired
     private CartRepository cartRepository;
     @Autowired
@@ -224,7 +226,10 @@ public class ProductServiceImpl implements ProductService {
         Product product =  productRepository.findById(productId)
                 .orElseThrow(()->
                         new ResourceNotFoundException("Product", "product", productId));
-
+        if (orderItemRepository.existsByProductProductId(productId))
+        {
+            throw new APIExceptions("This product cannot be deleted as its associated with ordered items.");
+        }
         List<Cart> carts = cartRepository.findCartsByProductId(productId);
         carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
         productRepository.delete(product);

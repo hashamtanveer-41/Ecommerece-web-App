@@ -1,7 +1,6 @@
 import React from 'react'
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
-import {Divider} from "@mui/material";
-import Status from "../shared/Status.jsx";
+
 import {FaExclamationTriangle, FaTimes} from "react-icons/fa";
 
 const DeleteModal = ({open, setOpen, title, onDeleteHandler, loader}) => {
@@ -73,4 +72,4 @@ const DeleteModal = ({open, setOpen, title, onDeleteHandler, loader}) => {
         </>
     )
 }
-export default DeleteModal
+export default DeleteModal;
