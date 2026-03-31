@@ -18,6 +18,7 @@ const Products = () => {
         (state) => state.products
     );
     const dispatch = useDispatch();
+
     useProductFilter();
 
     useEffect(()=> {

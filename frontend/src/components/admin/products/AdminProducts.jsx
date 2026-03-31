@@ -8,6 +8,7 @@ import { adminProductTableColumn} from "../../helper/TableColumns.jsx";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {useDashboardProductFilter} from "../../../hooks/useProductFilter.js";
 import Modal from "../../shared/Modal.jsx";
+import AddProductForm from "./AddProductForm.jsx";
 
 const AdminProducts = () => {
     const navigate = useNavigate();
@@ -21,8 +22,9 @@ const AdminProducts = () => {
     const emptyProduct = !products || products?.length === 0;
 
 
-    const [selectedItem, setSelectedItem] =useState("");
+    const [selectedProduct, setSelectedProduct] =useState("");
     const [updateOpenModal, setUpdateOpenModal] = useState(false);
+    const [openAddModal, setOpenAddModal] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(
         pagination?.pageNumber +1 || 1
@@ -49,27 +51,29 @@ const AdminProducts = () => {
         navigate(`${pathname}?${params.toString()}`)
     };
     const handleEdit = (product)=> {
-        setSelectedItem(product)
+        setSelectedProduct(product)
         setUpdateOpenModal(true)
     }
     const handleDelete = (product)=> {
-        setSelectedItem(product)
+        setSelectedProduct(product)
         setUpdateOpenModal(true)
     }
     const handleImageUpload  = (product) => {
-        setSelectedItem(product)
+        setSelectedProduct(product)
         setUpdateOpenModal(true)
     }
 
     const handleProductView = (product) => {
-        setSelectedItem(product)
+        setSelectedProduct(product)
         setUpdateOpenModal(true)
     }
 
     return (
         <div >
             <div className="pt-6 pb-10 flex justify-end">
-                <button className="bg-custom-blue  hover:bg-blue-800 text-white font-semibold flex items-center py-2 px-4 gap-2 rounded-md shadow-md transition-colors duration-300 hover:text-slate-300">
+                <button className="bg-custom-blue  hover:bg-blue-800 text-white font-semibold flex items-center py-2 px-4 gap-2 rounded-md shadow-md transition-colors duration-300 hover:text-slate-300"
+                    onClick={() => setOpenAddModal(true)}
+                >
                     <MdAddShoppingCart className="text-xl" />
                     Add Product
                 </button>
@@ -130,12 +134,15 @@ const AdminProducts = () => {
                 </>
             )}
             <Modal
-            open={updateOpenModal}
-            setOpen={setUpdateOpenModal}
-            title="Update Product"
+            open={updateOpenModal || openAddModal}
+            setOpen={updateOpenModal? setUpdateOpenModal : setOpenAddModal}
+            title={updateOpenModal ?"Update Product": "Add Product"}
             >
-
-
+                <AddProductForm
+                    setOpen={updateOpenModal? setUpdateOpenModal : setOpenAddModal}
+                    product={selectedProduct}
+                    update={updateOpenModal}
+                />
             </Modal>
         </div>
     )
