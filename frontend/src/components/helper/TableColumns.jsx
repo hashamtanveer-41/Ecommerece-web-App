@@ -1,5 +1,6 @@
 import {FaEdit, FaEye, FaImage, FaTrashAlt} from "react-icons/fa";
 import Modal from "../shared/Modal.jsx";
+import {MdOutlineEmail} from "react-icons/md";
 
 export const adminOrderTableColumn = (handleEdit)=>[
     {
@@ -244,7 +245,7 @@ export const adminCategoryTableColumn = (handleEdit,
         disableColumnMenu: true,
         field: "id",
         headerName: "Category Id",
-        minWidth: 200,
+        minWidth: 300,
         headerAlign: "center",
         align: "center",
         editable: false,
@@ -260,7 +261,7 @@ export const adminCategoryTableColumn = (handleEdit,
         align: "center",
         headerAlign: "center",
         editable: false,
-        width: 260,
+        width: 400,
         sortable: false,
         headerClassName: "text-black font-semibold border",
         cellClassName: "text-slate-700 font-normal border",
@@ -297,3 +298,55 @@ export const adminCategoryTableColumn = (handleEdit,
     },
 ];
 
+
+export const sellerTableColumns = [
+    {
+        disableColumnMenu: true,
+        field: "id",
+        headerName: "ID",
+        minWidth: 400,
+        headerAlign: "center",
+        align: "center",
+        editable: false,
+
+        headerClassName: "text-black font-semibold border",
+        cellClassName: "text-slate-700 font-normal border",
+        renderHeader: (params) => <span className="text-center">SellerID</span>,
+    },
+    {
+        disableColumnMenu: true,
+        field: "username",
+        headerName: "UserName",
+        minWidth: 400,
+        headerAlign: "center",
+        align: "center",
+        editable: false,
+        sortable: false,
+        headerClassName: "text-black font-semibold border",
+        cellClassName: "text-slate-700 font-normal border",
+        renderHeader: (params) => <span className="text-center">UserName</span>,
+    },
+    {
+        disableColumnMenu: true,
+        field: "email",
+        headerName: "Email",
+        align: "center",
+        width: 400,
+        editable: false,
+        sortable: false,
+        headerAlign: "center",
+        headerClassName: "text-black font-semibold text-center border ",
+        cellClassName: "text-slate-700 font-normal border text-center",
+        renderHeader: (params) => <span>Email</span>,
+        renderCell: (params) => {
+            return (
+                <div className="flex items-center justify-center gap-1">
+          <span>
+            <MdOutlineEmail className="text-slate-700 text-lg" />
+          </span>
+                    <span>{params?.row?.email}</span>
+                </div>
+            );
+        },
+    },
+];

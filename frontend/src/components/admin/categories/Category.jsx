@@ -13,6 +13,7 @@ import AddCategoryForm from "./AddCategoryForm.jsx";
 import {deleteCategoryFromDashboard, deleteProductFromDashboard} from "../../../store/action/index.js";
 import toast from "react-hot-toast";
 import DeleteModal from "../../checkout/DeleteModal.jsx";
+import ErrorPage from "../../shared/ErrorPage.jsx";
 
 const Category = () => {
     const {categories, pagination } = useSelector((state) => state.products)
@@ -36,6 +37,7 @@ const Category = () => {
         return {
             id: item.categoryId,
             categoryName: item.categoryName,
+            version: item.version,
         }
     });
     useDashboardCategoryFilter();
@@ -61,6 +63,7 @@ const Category = () => {
             setLoader, selectedCategory?.id, toast, setOpenDeleteModal
         ))
     }
+    if (errorMessage) return <ErrorPage message={errorMessage} />;
     return (
         <div>
             {/*Add Category Button*/}
@@ -90,7 +93,7 @@ const Category = () => {
                             </h2>
                         </div>
                     ): (
-                        <div className="max-w-full">
+                        <div className="max-w-fit mx-auto">
                             <DataGrid
                                 className="w-full"
                                 rows={tableRecords}

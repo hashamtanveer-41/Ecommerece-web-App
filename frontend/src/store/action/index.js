@@ -537,5 +537,46 @@ export const updateCategoryFromDashboard =
         }catch (error){
             toast.error(error?.response?.message || "Category update failed");
         }
+}
 
+
+export const getAllSellersDashboard = (queryString) => async (dispatch) => {
+    try {
+        dispatch({ type: "IS_FETCHING" });
+        const { data } = await api.get(`/auth/sellers?${queryString}`);
+        dispatch({
+            type: "GET_SELLERS",
+            payload: data.content,
+            pageNumber: data.pageNumber,
+            pageSize: data.pageSize,
+            totalElements: data.totalElements,
+            totalPages: data.totalPages,
+            lastPage: data.lastPage,
+        });
+        dispatch({ type: "IS_SUCCESS" });
+    } catch (error) {
+        console.log(error);
+        dispatch({
+            type: "IS_ERROR",
+            payload: error?.response?.data?.message || "Failed to fetch sellers datta",
+        });
     }
+};
+
+export const addNewSellerFromDashboard = (
+    sendData, toast,reset,setLoader, setOpen
+) =>  async (dispatch) => {
+    try {
+        setLoader(true)
+        await api.post(`/auth/signup` ,sendData)
+        toast.success("Category created successfully");
+        reset();
+        await dispatch(getAllSellersDashboard());
+    }catch (error){
+        console.log(error)
+        toast.error(error?.response?.data?.description || "Internal Server Error")
+    }finally {
+        setLoader(false)
+        setOpen(false)
+    }
+}

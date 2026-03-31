@@ -14,9 +14,7 @@ import Spinners from "../../shared/Spinners.jsx";
 const AddCategoryForm = ({ setOpen,category, update = false}) => {
     const [loader, setLoader ] = useState(false);
     const dispatch = useDispatch();
-    const [selectedCategory, setSelectedCategory] = useState();
-    const {categories } = useSelector((state) => state.products)
-    const {categoryLoader, errorMessage } = useSelector((state) => state.errors)
+
     const {
         register,
         handleSubmit,
