@@ -410,17 +410,32 @@ export const updateProductFromDashboard =
         reset();
         setLoader(false);
         setOpen(false);
+        await dispatch(dashboardProductsAction());
     }catch (error){
         toast.error(error?.response?.message || "Product update failed");
     }
 
 }
-export const addNewProductFromDashboard = () => (dispatch) => {
-
+export const addNewProductFromDashboard = (
+    sendData, toast,reset,setLoader, setOpen
+) =>  async (dispatch, getState) => {
+    try {
+        setLoader(true)
+        await api.post(`/admin/categories/${sendData.categoryId}/product` ,sendData)
+        toast.success("Product created successfully");
+        setOpen(false)
+        reset();
+        await dispatch(dashboardProductsAction());
+    }catch (error){
+        console.log(error)
+        toast.error(error?.response?.data?.description || "Failed to create Product")
+    }finally {
+        setLoader(false)
+    }
 }
 
 export const deleteProductFromDashboard = (setLoader, productId, toast,setOpenDeleteModal) =>
-     async (dispatch, getState) => {
+     async (dispatch) => {
      try {
          setLoader(true);
          await api.delete(`/admin/products/${productId}`);
@@ -434,3 +449,19 @@ export const deleteProductFromDashboard = (setLoader, productId, toast,setOpenDe
          setOpenDeleteModal(false);
      }
 }
+
+export const updateProductImageFromDashboard =
+    (formData, productId, toast, setLoader, setOpen) => async (dispatch) => {
+        try {
+            setLoader(true);
+            await api.put(`/admin/products/${productId}/image`, formData);
+            toast.success("Image upload successfully");
+            await dispatch(getOrdersForDashboard());
+        }catch (error){
+            toast.error(error?.response?.message || "Product Image upload failed");
+        }finally {
+            setLoader(false);
+            setOpen(false);
+        }
+
+    }

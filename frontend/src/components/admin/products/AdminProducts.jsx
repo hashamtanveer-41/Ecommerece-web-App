@@ -13,6 +13,7 @@ import DeleteModal from "../../checkout/DeleteModal.jsx";
 import {deleteProductFromDashboard} from "../../../store/action/index.js";
 import toast from "react-hot-toast";
 import ImageUploadForm from "./ImageUploadForm.jsx";
+import ProductViewModal from "../../shared/ProductViewModal.jsx";
 
 const AdminProducts = () => {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ const AdminProducts = () => {
     const [updateOpenModal, setUpdateOpenModal] = useState(false);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openImageModal, setOpenImageModal] = useState(false);
+    const [openProductViewModal, setOpenProductViewModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [loader, setLoader] = useState(false);
 
@@ -73,7 +75,7 @@ const AdminProducts = () => {
 
     const handleProductView = (product) => {
         setSelectedProduct(product)
-        setUpdateOpenModal(true)
+        setOpenProductViewModal(true)
     }
 
     const onDeleteHandler = () => {
@@ -166,7 +168,6 @@ const AdminProducts = () => {
                 <ImageUploadForm
                     setOpen={setOpenImageModal}
                     product={selectedProduct}
-                    update={updateOpenModal}
                 />
             </Modal>
 
@@ -178,6 +179,12 @@ const AdminProducts = () => {
                 loader={loader}
             >
             </DeleteModal>
+            <ProductViewModal
+                open={openProductViewModal}
+                setOpen={setOpenProductViewModal}
+                product={selectedProduct}
+                isAvailable={selectedProduct.isAvailable}
+            />
         </div>
     )
 }

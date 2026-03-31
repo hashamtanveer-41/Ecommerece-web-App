@@ -62,11 +62,11 @@ public class ProductServiceImpl implements ProductService {
                  .orElseThrow(()->
                          new ResourceNotFoundException("Category", "category", categoryID));
 
-         boolean ifProductExist = false;
+         boolean ifProductExist = true;
          List<Product> products = category.getProducts();
          for (Product existingProduct : products){
              if (existingProduct.getProductName().equals(productDTO.getProductName())) {
-                 ifProductExist = true;
+                 ifProductExist = false;
                  break;
              }
          }

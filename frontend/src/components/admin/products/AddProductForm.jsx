@@ -4,7 +4,7 @@ import InputField from "../../shared/InputField.jsx";
 import {Button} from "@headlessui/react";
 import Spinners from "../../shared/Spinners.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchCategories, updateProductFromDashboard} from "../../../store/action/index.js";
+import {addNewProductFromDashboard, fetchCategories, updateProductFromDashboard} from "../../../store/action/index.js";
 import toast from "react-hot-toast";
 import SelectTextField from "../../shared/SelectTextField.jsx";
 import Skeleton from "../../shared/Skeleton.jsx";
@@ -27,7 +27,7 @@ const AddProductForm = ({ setOpen,product, update = false}) => {
         if (!update){
             const sendData = {
                 ...data,
-                id: product.id,
+                categoryId: selectedCategory.categoryId,
             };
             dispatch(addNewProductFromDashboard(sendData, toast, reset, setLoader, setOpen));
         }else{
@@ -138,6 +138,7 @@ const AddProductForm = ({ setOpen,product, update = false}) => {
 
                     <textarea
                         rows={5}
+                        maxLength={255}
                         placeholder="Add product description..."
                         className={`px-4 py-2 w-full border outline-none bg-transparent text-slate-800 rounded-md ${
                             errors["description"]?.message ? "border-red-500" : "border-slate-600"
@@ -173,7 +174,7 @@ const AddProductForm = ({ setOpen,product, update = false}) => {
                                 <Spinners /> Loading...
                             </div>
                         ):(
-                            "Update"
+                            "Save"
                         )}
                     </Button>
 
