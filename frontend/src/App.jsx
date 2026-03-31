@@ -18,6 +18,7 @@ import Dashboard from "./components/admin/dashboard/Dashboard.jsx";
 import AdminProducts from "./components/admin/products/AdminProducts.jsx";
 import Sellers from "./components/admin/sellers/Sellers.jsx";
 import Category from "./components/admin/categories/Category.jsx";
+import Orders from "./components/admin/Orders/Orders.jsx";
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
                           <Route path="" element={<Dashboard />} />
                           <Route path="products" element={<AdminProducts />} />
                           <Route path="sellers" element={<Sellers />} />
+                          <Route path="orders" element={<Orders />} />
                           <Route path="categories" element={<Category />} />
                       </Route>
                   </Route>
