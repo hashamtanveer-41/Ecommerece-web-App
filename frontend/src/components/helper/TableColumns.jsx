@@ -236,3 +236,64 @@ export const adminProductTableColumn = (handleEdit,
     },
 ];
 
+export const adminCategoryTableColumn = (handleEdit,
+                                        handleDelete,
+                                        )=>[
+    {
+        sortable: false,
+        disableColumnMenu: true,
+        field: "id",
+        headerName: "Category Id",
+        minWidth: 200,
+        headerAlign: "center",
+        align: "center",
+        editable: false,
+        headerClassName: "text-black font-semibold border",
+        cellClassName: "text-slate-700 font-normal border",
+        renderHeads: (params) => <span className="text-center">Category ID</span>
+    },
+    {
+        // Column for customer Email
+        disableColumnMenu: true,
+        field: "categoryName",
+        headerName: "Category Name",
+        align: "center",
+        headerAlign: "center",
+        editable: false,
+        width: 260,
+        sortable: false,
+        headerClassName: "text-black font-semibold border",
+        cellClassName: "text-slate-700 font-normal border",
+        renderHeader: (params) => <span >Category Name</span>
+    },
+    {
+        // Custom action column with an Edit button
+        disableColumnMenu: true,
+        field: "action",
+        headerName: "Action",
+        width: 400,
+        align: "center",
+        headerAlign: "center",
+        editable: false,
+        sortable: false,
+        headerClassName: "text-black font-semibold border",
+        cellClassName: "text-slate-700 font-normal border",
+        renderHeader: (params) => <span >Action</span>,
+        renderCell: (params) =>{
+            return (
+                <div className="flex justify-center items-center space-x-2 h-full pt-2">
+                    <button className="flex items-center bg-blue-500 text-white px-4 h-9 rounded-md">
+                        <FaEdit className="mr-2" onClick={() => handleEdit(params.row)}/>
+                        Edit
+                    </button>
+
+                    <button className="flex items-center bg-red-500 text-white px-4 h-9 rounded-md">
+                        <FaTrashAlt className="mr-2" onClick={() => handleDelete(params.row)}/>
+                        Delete
+                    </button>
+                </div>
+            );
+        }
+    },
+];
+

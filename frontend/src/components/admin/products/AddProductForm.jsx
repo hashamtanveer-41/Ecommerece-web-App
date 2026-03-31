@@ -16,6 +16,7 @@ const AddProductForm = ({ setOpen,product, update = false}) => {
     const [selectedCategory, setSelectedCategory] = useState();
     const {categories } = useSelector((state) => state.products)
     const {categoryLoader, errorMessage } = useSelector((state) => state.errors)
+
     const {
             register,
             handleSubmit,
@@ -23,6 +24,7 @@ const AddProductForm = ({ setOpen,product, update = false}) => {
             setValue,
             formState: {errors},
     } = useForm({mode: "onTouched"});
+
     const saveProductHandler = (data) => {
         if (!update){
             const sendData = {

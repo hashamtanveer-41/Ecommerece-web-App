@@ -464,4 +464,78 @@ export const updateProductImageFromDashboard =
             setOpen(false);
         }
 
+}
+
+export const dashboardCategoriesAction = (queryString) => async (dispatch) => {
+    try {
+        dispatch({ type: "IS_FETCHING" });
+        const endpoint = "/public/categories";
+        const { data } = await api.get(`${endpoint}?${queryString}`);
+        dispatch({
+            type: "FETCH_CATEGORIES",
+            payload: data.content,
+            pageNumber: data.pageNumber,
+            pageSize: data.pageSize,
+            totalElements: data.totalElements,
+            totalPages: data.totalPages,
+            lastPage: data.lastPage,
+        });
+        dispatch({ type: "IS_SUCCESS" });
+    } catch (error) {
+        console.log(error);
+        dispatch({
+            type: "IS_ERROR",
+            payload: error?.response?.data?.message || "Failed to fetch dashboard categories",
+        });
+    }
+};
+
+export const deleteCategoryFromDashboard = (setLoader, categoryId, toast,setOpenDeleteModal) =>
+    async (dispatch) => {
+        try {
+            setLoader(true);
+            await api.delete(`/admin/categories/${categoryId}`);
+            toast.success("Category deleted successfully")
+            await dispatch(dashboardCategoriesAction());
+        }catch (error){
+            console.log(error);
+            toast.error(error?.response?.data?.message|| "Failed to delete the category");
+        }finally {
+            setLoader(false)
+            setOpenDeleteModal(false);
+        }
+}
+
+export const addNewCategoryFromDashboard = (
+    sendData, toast,reset,setLoader, setOpen
+) =>  async (dispatch) => {
+    try {
+        setLoader(true)
+        await api.post(`/admin/categories` ,sendData)
+        toast.success("Category created successfully");
+        setOpen(false)
+        reset();
+        await dispatch(dashboardCategoriesAction());
+    }catch (error){
+        console.log(error)
+        toast.error(error?.response?.data?.description || "Failed to create Category")
+    }finally {
+        setLoader(false)
+    }
+}
+
+export const updateCategoryFromDashboard =
+    (sendData, toast, reset, setLoader, setOpen) => async (dispatch) => {
+        try {
+            setLoader(true);
+            await api.put(`/admin/categories/${sendData.id}`, sendData);
+            toast.success("Category updated successfully");
+            reset();
+            setLoader(false);
+            setOpen(false);
+            await dispatch(dashboardCategoriesAction());
+        }catch (error){
+            toast.error(error?.response?.message || "Category update failed");
+        }
+
     }
