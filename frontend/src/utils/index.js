@@ -32,3 +32,8 @@ export const adminNavigation = [
     {name: "Categories", href:"/admin/categories", icon: FaThList},
     {name: "Seller", href:"/admin/sellers", icon: FaStore}
 ]
+
+export const sellerNavigation = [
+    {name: "Orders", href:"/admin/orders", icon: FaShoppingCart},
+    {name: "Products", href:"/admin/products", icon: FaBoxOpen},
+]

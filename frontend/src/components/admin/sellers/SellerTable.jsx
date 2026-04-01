@@ -10,13 +10,13 @@ const SellerTable = ({ sellers, pagination }) => {
     const params = new URLSearchParams(searchParams);
     const [currentPage, setCurrentPage] = useState(pagination?.pageNumber || 1);
 
-    const tableRecords = sellers?.filter((item) => item.userId).map((item) => {
+    const tableRecords = sellers?.map((item) => {
         return {
             id: item.userId,
             username: item.username,
             email: item.email,
         };
-    }) || [];
+    });
 
     const handlePaginationChange = (paginationModel) => {
         const page = paginationModel.page + 1;

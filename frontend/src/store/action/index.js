@@ -158,10 +158,13 @@ export const authenticateRegisterNewUser = (sendData, toast, reset, navigate, se
     }
 }
 
-export const logoutUser = (navigate) => (dispatch) => {
-  dispatch({type: "LOG_OUT"});
-  localStorage.removeItem("auth");
-  navigate("/login");
+export const logoutUser = (navigate, setAnchorEl) => async (dispatch) => {
+    dispatch({type: "LOG_OUT"});
+    await api.post("/auth/signout")
+    localStorage.removeItem("auth");
+    navigate("/login");
+    setAnchorEl(false)
+    window.location.href = "/login";
 };
 
 export const addUpdateUserAddress = (sendData, toast, addressId, setOpenAddressModal) =>
@@ -340,10 +343,13 @@ export const analyticsAction = ()=>async (dispatch, getState) => {
     }
 }
 
-export const getOrdersForDashboard = (queryString) => async (dispatch) => {
+export const getOrdersForDashboard = () => async (dispatch, getState) => {
     try {
         dispatch({ type: "IS_FETCHING" });
-        const { data } = await api.get(`/admin/orders?${queryString}`);
+        const {user} = getState().auth;
+        const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+        const endpoint = isAdmin ? "/admin/orders" : "/seller/orders";
+        const { data } = await api.get(`${endpoint}`);
         dispatch({
             type: "GET_ADMIN_ORDERS",
             payload: data.content,
@@ -366,7 +372,10 @@ export const getOrdersForDashboard = (queryString) => async (dispatch) => {
 export const  updateOrderStatusFromDashboard = (orderId, orderStatus, toast, setLoader) => async (dispatch, getState) => {
     try {
         setLoader(true)
-        const {data} = await  api.put(`/admin/orders/${orderId}/status` , {status: orderStatus})
+        const {user} = getState().auth;
+        const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+        const endpoint = isAdmin ? "admin" : "seller";
+        const {data} = await  api.put(`/${endpoint}/orders/${orderId}/status` , {status: orderStatus})
         toast.success(data.message || "Order updated Successfully")
         await dispatch(getOrdersForDashboard());
     }catch (error){
@@ -402,10 +411,14 @@ export const dashboardProductsAction = (queryString ="", isAdmin) => async (disp
 };
 
 export const updateProductFromDashboard =
-    (sendData, toast, reset, setLoader, setOpen) => async (dispatch) => {
+    (sendData, toast, reset, setLoader, setOpen) => async (dispatch ,getState) => {
     try {
         setLoader(true);
-        await api.put(`/admin/products/${sendData.id}`, sendData);
+        const {user} = getState().auth;
+        const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+        const endpoint = isAdmin ? "admin" : "seller";
+
+        await api.put(`/${endpoint}/products/${sendData.id}`, sendData);
         toast.success("Product update successfully");
         reset();
         setLoader(false);
@@ -421,7 +434,12 @@ export const addNewProductFromDashboard = (
 ) =>  async (dispatch, getState) => {
     try {
         setLoader(true)
-        await api.post(`/admin/categories/${sendData.categoryId}/product` ,sendData)
+        const {user} = getState().auth;
+        const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+        const endpoint = isAdmin ? "admin" : "seller";
+
+
+        await api.post(`/${endpoint}/categories/${sendData.categoryId}/product` ,sendData)
         toast.success("Product created successfully");
         setOpen(false)
         reset();
@@ -569,7 +587,7 @@ export const addNewSellerFromDashboard = (
     try {
         setLoader(true)
         await api.post(`/auth/signup` ,sendData)
-        toast.success("Category created successfully");
+        toast.success("Seller created successfully");
         reset();
         await dispatch(getAllSellersDashboard());
     }catch (error){

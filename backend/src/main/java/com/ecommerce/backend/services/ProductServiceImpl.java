@@ -73,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
          if (ifProductExist) {
              Product product = modelMapper.map(productDTO, Product.class);
              product.setCategory(category);
+             product.setUser(authUtil.loggedInUser());
              double specialPrice = product.getPrice() -
                      (product.getDiscount() * 0.01) * product.getPrice();
              product.setSpecialPrice(specialPrice);

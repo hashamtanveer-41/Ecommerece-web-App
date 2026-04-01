@@ -28,6 +28,14 @@ public class ProductController {
 
         return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
     }
+
+    @PostMapping("/seller/categories/{categoryID}/product")
+    public ResponseEntity<ProductDTO> addProductForSeller(@Valid  @RequestBody ProductDTO productDTO,
+                                                 @PathVariable Long categoryID){
+
+        ProductDTO savedProductDTO =productService.addProduct(categoryID, productDTO);
+        return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
+    }
     @GetMapping("/public/products")
     public ResponseEntity<ProductResponse> getAllProducts(
             @RequestParam(name = "keyword", required = false) String keyword,
@@ -70,7 +78,14 @@ public class ProductController {
     public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
                                                     @PathVariable Long productId){
         ProductDTO savedProductDTo = productService.updateProduct(productDTO, productId);
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(savedProductDTo, HttpStatus.OK);
+    }
+
+    @PutMapping("/seller/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProductForSeller(@Valid @RequestBody ProductDTO productDTO,
+                                                    @PathVariable Long productId){
+        ProductDTO savedProductDTo = productService.updateProduct(productDTO, productId);
+        return new ResponseEntity<>(savedProductDTo, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/products/{productId}")
