@@ -94,12 +94,23 @@ public class ProductController {
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
+    @DeleteMapping("/seller/products/{productId}")
+    public ResponseEntity<ProductDTO> deleteProductForSeller(@PathVariable Long productId){
+        ProductDTO productDTO = productService.deleteProduct(productId);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
+
     @PutMapping("/admin/products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestParam("image")MultipartFile image) throws IOException {
         ProductDTO productDTO = productService.updateProductImage(productId, image);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
+    @PutMapping("/seller/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImageForSeller(@PathVariable Long productId, @RequestParam("image")MultipartFile image) throws IOException {
+        ProductDTO productDTO = productService.updateProductImage(productId, image);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
     @GetMapping("/admin/products")
     public ResponseEntity<ProductResponse> getAllAdminProducts(
         @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,

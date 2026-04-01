@@ -456,7 +456,11 @@ export const deleteProductFromDashboard = (setLoader, productId, toast,setOpenDe
      async (dispatch) => {
      try {
          setLoader(true);
-         await api.delete(`/admin/products/${productId}`);
+         const {user} = getState().auth;
+         const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+         const endpoint = isAdmin ? "admin" : "seller";
+
+         await api.delete(`/${endpoint}/products/${productId}`);
          toast.success("Product deleted successfully")
          await dispatch(getOrdersForDashboard());
      }catch (error){
@@ -469,12 +473,15 @@ export const deleteProductFromDashboard = (setLoader, productId, toast,setOpenDe
 }
 
 export const updateProductImageFromDashboard =
-    (formData, productId, toast, setLoader, setOpen) => async (dispatch) => {
+    (formData, productId, toast, setLoader, setOpen) => async (dispatch, getState) => {
         try {
             setLoader(true);
-            await api.put(`/admin/products/${productId}/image`, formData);
+            const {user} = getState().auth;
+            const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+            const endpoint = isAdmin ? "admin" : "seller";
+            await api.put(`/${endpoint}/products/${productId}/image`, formData);
             toast.success("Image upload successfully");
-            await dispatch(getOrdersForDashboard());
+            await dispatch(dashboardProductsAction());
         }catch (error){
             toast.error(error?.response?.message || "Product Image upload failed");
         }finally {

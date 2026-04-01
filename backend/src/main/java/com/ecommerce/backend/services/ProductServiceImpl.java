@@ -142,11 +142,15 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = productRepository.findByCategoryOrderByPriceAsc(category, pageDetails);
 
         List<Product> products = productPage.getContent();
-        List<ProductDTO> productDTOS= products.stream()
-                .map(product ->  modelMapper.map(product, ProductDTO.class))
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> {
+                    ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+                    productDTO.setImage(constructImageUrl(product.getImage())); // Add this
+                    return productDTO;
+                })
                 .toList();
         if (products.isEmpty()){
-            throw new APIExceptions("No Category product exists with categorySpring");
+            throw new APIExceptions("No Category product exists with category");
         }
         ProductResponse productResponse = new ProductResponse();
         productResponse.setContent(productDTOS);
@@ -169,9 +173,12 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> products = pageProducts.getContent();
         List<ProductDTO> productDTOS = products.stream()
-                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .map(product -> {
+                    ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+                    productDTO.setImage(constructImageUrl(product.getImage()));
+                    return productDTO;
+                })
                 .toList();
-
         if(products.isEmpty()){
             throw new APIExceptions("Products not found with keyword: " + keyword);
         }
@@ -245,16 +252,15 @@ public class ProductServiceImpl implements ProductService {
         Product productFromDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "product", productId));
 
-        // Upload the image to the server
-        // Get the file name of the uploaded image
         String fileName = fileService.uploadImage(path, image);
-        // Updating the new file name to the product
         productFromDB.setImage(fileName);
+
+        Product updatedProduct = productRepository.save(productFromDB);
         //Save product
-        Product updatedProduct =productRepository.save(productFromDB);
-        // return DTO after mapping product to DTO
-        return modelMapper.map(updatedProduct, ProductDTO.class);
-    }
+        ProductDTO productDTO = modelMapper.map(updatedProduct, ProductDTO.class);
+        productDTO.setImage(constructImageUrl(updatedProduct.getImage()));
+
+        return productDTO;}
 
     @Override
     public ProductResponse getAllProductsForAdmin(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
