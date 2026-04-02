@@ -36,7 +36,7 @@ public class WebSecurityConfig {
     @Autowired
     private AuthEntryPointJWT unauthorizedHandler;
 
-    @Value("${frontend.url:http://localhost:3000}")
+    @Value("${frontend.url}")
     private String frontendUrl;
 
     @Bean
