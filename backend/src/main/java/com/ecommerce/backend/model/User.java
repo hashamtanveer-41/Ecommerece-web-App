@@ -65,6 +65,7 @@ public class User {
 
     @Getter
     @Setter
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST},orphanRemoval = true )
 //    @JoinTable( name = "user_address",
 //            joinColumns = @JoinColumn(name = "user_id"),

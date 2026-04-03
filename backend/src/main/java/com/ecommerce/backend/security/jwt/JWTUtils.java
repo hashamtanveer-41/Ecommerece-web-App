@@ -65,8 +65,9 @@ public class JWTUtils {
         return ResponseCookie.from(jwtCookieName, jwt)
                 .path("/api")
                 .maxAge(24 * 60 * 60)
-                .httpOnly(false)
-                .secure(false)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
                 .build();
     }
 
