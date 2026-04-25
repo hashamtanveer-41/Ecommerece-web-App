@@ -605,3 +605,18 @@ export const addNewSellerFromDashboard = (
         setOpen(false)
     }
 }
+
+export const sendContactMessage = (sendData, toast, reset, setLoader) => async (dispatch) => {
+    try {
+        setLoader(true)
+        console.log(sendData)
+        await api.post("/contact", sendData);
+        toast.success("Message sent successfully");
+        reset();
+    }catch (error){
+        console.log(error);
+        toast.error(error?.response?.data?.message || "Failed to send message. Please try again later.");
+    }finally {
+        setLoader(false);
+    }
+}
