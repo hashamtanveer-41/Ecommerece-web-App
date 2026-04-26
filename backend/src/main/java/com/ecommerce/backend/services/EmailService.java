@@ -1,4 +1,4 @@
-package com.ecommerce.backend.controller;
+package com.ecommerce.backend.services;
 
 import com.ecommerce.backend.payload.ContactRequest;
 import org.springframework.beans.factory.annotation.Autowired;

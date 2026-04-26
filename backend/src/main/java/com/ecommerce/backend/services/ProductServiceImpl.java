@@ -110,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> {
                     ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-                    productDTO.setImage(constructImageUrl(product.getImage()));
+                    productDTO.setImage(product.getImage());
                     return productDTO;
                 })
                 .toList();
@@ -145,7 +145,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> {
                     ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-                    productDTO.setImage(constructImageUrl(product.getImage())); // Add this
+                    productDTO.setImage(product.getImage()); // Add this
                     return productDTO;
                 })
                 .toList();
@@ -175,7 +175,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> {
                     ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-                    productDTO.setImage(constructImageUrl(product.getImage()));
+                    productDTO.setImage(product.getImage());
                     return productDTO;
                 })
                 .toList();
@@ -252,13 +252,13 @@ public class ProductServiceImpl implements ProductService {
         Product productFromDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "product", productId));
 
-        String fileName = fileService.uploadImage(path, image);
+        String fileName = fileService.uploadImage( image);
         productFromDB.setImage(fileName);
 
         Product updatedProduct = productRepository.save(productFromDB);
         //Save product
         ProductDTO productDTO = modelMapper.map(updatedProduct, ProductDTO.class);
-        productDTO.setImage(constructImageUrl(updatedProduct.getImage()));
+        productDTO.setImage(updatedProduct.getImage());
 
         return productDTO;}
 
@@ -276,7 +276,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> {
                     ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-                    productDTO.setImage(constructImageUrl(product.getImage()));
+                    productDTO.setImage(product.getImage());
                     return productDTO;
                 })
                 .toList();
@@ -306,7 +306,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> {
                     ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-                    productDTO.setImage(constructImageUrl(product.getImage()));
+                    productDTO.setImage(product.getImage());
                     return productDTO;
                 })
                 .toList();
