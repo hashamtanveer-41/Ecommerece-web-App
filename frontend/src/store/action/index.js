@@ -389,6 +389,8 @@ export const  updateOrderStatusFromDashboard = (orderId, orderStatus, toast, set
 export const dashboardProductsAction = (queryString ="", isAdmin) => async (dispatch) => {
     try {
         dispatch({ type: "IS_FETCHING" });
+        const {user} = getState().auth;
+        const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
         const endpoint = isAdmin ? "/admin/products" : "/seller/products";
         const { data } = await api.get(`${endpoint}?${queryString}`);
         dispatch({
@@ -453,7 +455,7 @@ export const addNewProductFromDashboard = (
 }
 
 export const deleteProductFromDashboard = (setLoader, productId, toast,setOpenDeleteModal) =>
-     async (dispatch) => {
+     async (dispatch, getState) => {
      try {
          setLoader(true);
          const {user} = getState().auth;
