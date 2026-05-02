@@ -12,6 +12,7 @@ import sendinblue.Configuration;
 import sendinblue.auth.ApiKeyAuth;
 import sibApi.TransactionalEmailsApi;
 import sibModel.SendSmtpEmail;
+import sibModel.SendSmtpEmailReplyTo;
 import sibModel.SendSmtpEmailSender;
 import sibModel.SendSmtpEmailTo;
 
@@ -33,10 +34,19 @@ public class EmailService {
 
         TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
 
+        SendSmtpEmailSender sender = new SendSmtpEmailSender();
+        sender.setEmail("hashamtanvr42@gmail.com");
+        sender.setName("Ecommerce Contact Form");
         SendSmtpEmail sendSmtpEmail = new SendSmtpEmail();
-        sendSmtpEmail.setSender(new SendSmtpEmailSender()
-                .email("hashamtanvr42@gmail.com").name("Ecommerce Contact Form"));
-        sendSmtpEmail.setTo(Collections.singletonList(new SendSmtpEmailTo().email(contactRequest.getEmail())));
+        sendSmtpEmail.setSender(sender);
+        SendSmtpEmailTo to = new SendSmtpEmailTo();
+        to.setEmail("hashamtanvr42@gmail.com");
+        sendSmtpEmail.setTo(Collections.singletonList(to));
+
+        SendSmtpEmailReplyTo replyTo = new SendSmtpEmailReplyTo();
+        replyTo.setEmail(contactRequest.getEmail());
+        sendSmtpEmail.setReplyTo(replyTo);
+
         sendSmtpEmail.setSubject("Contact Form: " + contactRequest.getMessage());
         sendSmtpEmail.setHtmlContent("<html><body>" +
                 "<h1>New Contact Request</h1>" +
@@ -48,7 +58,13 @@ public class EmailService {
         try {
             apiInstance.sendTransacEmail(sendSmtpEmail);
         } catch (ApiException e) {
-            System.out.println("Error sending email: " + e.getResponseBody());
+            System.err.println("Exception when calling TransactionalEmailsApi#sendTransacEmail");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Generic Error: " + e.getMessage());
+            e.printStackTrace();
         }
 //        // Implement email sending logic using JavaMailSender
 //        SimpleMailMessage mailMessage = new SimpleMailMessage();
