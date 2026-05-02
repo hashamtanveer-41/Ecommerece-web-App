@@ -44,6 +44,11 @@
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
+			<groupId>com.sendinblue</groupId>
+			<artifactId>sib-api-v3-sdk</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
 			<version>29.3.0</version>
