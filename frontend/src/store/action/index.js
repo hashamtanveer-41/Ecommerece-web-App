@@ -386,7 +386,7 @@ export const  updateOrderStatusFromDashboard = (orderId, orderStatus, toast, set
     }
 }
 
-export const dashboardProductsAction = (queryString ="", isAdmin) => async (dispatch) => {
+export const dashboardProductsAction = (queryString ="", isAdmin) => async (dispatch, getState) => {
     try {
         dispatch({ type: "IS_FETCHING" });
         const {user} = getState().auth;
