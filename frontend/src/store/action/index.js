@@ -464,13 +464,13 @@ export const deleteProductFromDashboard = (setLoader, productId, toast,setOpenDe
 
          await api.delete(`/${endpoint}/products/${productId}`);
          toast.success("Product deleted successfully")
-         await dispatch(getOrdersForDashboard());
      }catch (error){
          console.log(error);
          toast.error(error?.response?.data?.message|| "Failed to delete the product");
      }finally {
          setLoader(false)
          setOpenDeleteModal(false);
+         await dispatch(dashboardProductsAction());
      }
 }
 
