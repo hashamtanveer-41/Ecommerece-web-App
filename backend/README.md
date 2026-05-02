@@ -56,13 +56,13 @@ Create a `.env` file (or use your deployment environment) with the following val
 ## Installation & Local Setup
 1. Clone the repository:
    ```bash
-   git clone <YOUR_REPO_URL>
+   git clone https://github.com/hashamtanveer-41/Ecommerece-web-App
    cd backend
    ```
 2. Create a `.env` file and fill in environment variables.
 3. Build the application:
    ```bash
-   mvn clean package -DskipTests
+   mvn clean package
    ```
 4. Run the app locally:
    ```bash
@@ -74,11 +74,11 @@ Create a `.env` file (or use your deployment environment) with the following val
 Pull and run the official image from Docker Hub:
 
 ```bash
-docker pull <YOUR_DOCKERHUB_NAMESPACE>/ecommerce-backend:latest
+docker pull https://hub.docker.com/r/hasham41/ecommerce-backend/tags
 ```
 
 ```bash
-docker run --env-file .env -p 8080:8080 <YOUR_DOCKERHUB_NAMESPACE>/ecommerce-backend:latest
+docker run --env-file .env -p 8080:8080 https://hub.docker.com/r/hasham41/ecommerce-backend:latest
 ```
 
 Or run with Docker Compose (PostgreSQL + backend):
