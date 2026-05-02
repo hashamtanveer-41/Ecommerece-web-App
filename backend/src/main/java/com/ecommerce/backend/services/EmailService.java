@@ -7,6 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import sendinblue.ApiClient;
+import sendinblue.ApiException;
 import sendinblue.Configuration;
 import sendinblue.auth.ApiKeyAuth;
 import sibApi.TransactionalEmailsApi;
@@ -34,7 +35,7 @@ public class EmailService {
 
         SendSmtpEmail sendSmtpEmail = new SendSmtpEmail();
         sendSmtpEmail.setSender(new SendSmtpEmailSender()
-                .email("").name("Ecommerce Contact Form"));
+                .email("hashamtanvr42@gmail.com").name("Ecommerce Contact Form"));
         sendSmtpEmail.setTo(Collections.singletonList(new SendSmtpEmailTo().email(contactRequest.getEmail())));
         sendSmtpEmail.setSubject("Contact Form: " + contactRequest.getMessage());
         sendSmtpEmail.setHtmlContent("<html><body>" +
@@ -46,8 +47,8 @@ public class EmailService {
 
         try {
             apiInstance.sendTransacEmail(sendSmtpEmail);
-        } catch (Exception e) {
-            System.out.println("Error sending email: " + e.getMessage());
+        } catch (ApiException e) {
+            System.out.println("Error sending email: " + e.getResponseBody());
         }
 //        // Implement email sending logic using JavaMailSender
 //        SimpleMailMessage mailMessage = new SimpleMailMessage();
